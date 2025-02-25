@@ -11,12 +11,12 @@ namespace IATec.Shared.HttpClient.Service
 {
     public class ServiceClient : IServiceClient
     {
-        public System.Net.Http.HttpClient httpClient;
+        private System.Net.Http.HttpClient _httpClient;
         private readonly IStringLocalizer<Messages> _localizer;
 
         public ServiceClient(System.Net.Http.HttpClient httpClient, IStringLocalizer<Messages> localizer)
         {
-            this.httpClient = httpClient;
+            _httpClient = httpClient;
             _localizer = localizer;
         }
 
@@ -24,11 +24,11 @@ namespace IATec.Shared.HttpClient.Service
         {
             var responseDto = new ResponseDto<T>(false);
 
-            HttpResponseMessage? response = null;
+            HttpResponseMessage response;
 
             try
             {
-                response = await httpClient.GetAsync(url);
+                response = await _httpClient.GetAsync(url);
             }
             catch (BrokenCircuitException)
             {
@@ -49,7 +49,7 @@ namespace IATec.Shared.HttpClient.Service
                 {
                     var responseData = await response.Content.ReadAsStringAsync();
                     var data = JsonSerializer.Deserialize<T>(responseData);
-                    responseDto.Data = data;
+                    responseDto.SetData(data);
                 }
             }
             catch (Exception ex)

@@ -2,12 +2,12 @@
 {
     public class ErrorDto
     {
-        public ErrorDto(string message)
+        internal ErrorDto(string message)
         {
             Message = message;
         }
 
-        public ErrorDto(string message, int? statusCode)
+        internal ErrorDto(string message, int? statusCode)
         {
             Message = message;
             StatusCode = statusCode;

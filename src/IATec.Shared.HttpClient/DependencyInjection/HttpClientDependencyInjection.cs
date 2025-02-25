@@ -16,7 +16,7 @@ namespace IATec.Shared.HttpClient.DependencyInjection
         {
             var config = new HttpClientPolicyConfiguration();
 
-            configurePolicy?.Invoke(config);
+            configurePolicy.Invoke(config);
 
             services.AddSingleton<IAsyncPolicy<HttpResponseMessage>>(serviceProvider =>
             {
@@ -43,7 +43,9 @@ namespace IATec.Shared.HttpClient.DependencyInjection
                 var circuitBreakerPolicy = CircuitBreakerExtensions
                     .CircuitBreakerPolicy(config.CircuitBreakerFailuresAllowedBeforeBreaking, config.CircuitBreakerDuration);
 
-                policy = Policy.WrapAsync(policy, circuitBreakerPolicy);
+                policy = Policy.WrapAsync(retryPolicy, circuitBreakerPolicy);
+
+                return policy;
             }
 
             if (config.UseRetry)

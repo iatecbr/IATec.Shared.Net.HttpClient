@@ -4,7 +4,7 @@ namespace IATec.Shared.HttpClient.Dto
 {
     public class ResponseDto<T>
     {
-        public ResponseDto(bool success)
+        internal ResponseDto(bool success)
         {
             Success = success;
         }
@@ -13,17 +13,22 @@ namespace IATec.Shared.HttpClient.Dto
         public T Data { get; set; }
         public List<ErrorDto> Errors { get; set; } = new List<ErrorDto>();
 
-        public void AddError(string message)
+        internal void AddError(string message)
         {
             Errors.Add(new ErrorDto(message));
         }
 
-        public void AddError(int? statusCode, string message)
+        internal void AddError(int? statusCode, string message)
         {
             Errors.Add(new ErrorDto(message, statusCode));
         }
 
-        public void SetSuccess(bool success)
+        internal void SetData(T data)
+        {
+            Data = data;
+        }
+
+        internal void SetSuccess(bool success)
         {
             Success = success;
         }
