@@ -46,16 +46,7 @@ namespace IATec.Shared.HttpClient.Service
                 HandleResponse(response, responseDto);
 
                 if (responseDto.Success)
-                {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true,
-                    };
-
-                    var responseData = await response.Content.ReadAsStringAsync();
-                    var data = JsonSerializer.Deserialize<T>(responseData, options);
-                    responseDto.SetData(data);
-                }
+                    responseDto.SetData(await Deserialize<T>(response));
             }
             catch (Exception ex)
             {
@@ -76,6 +67,17 @@ namespace IATec.Shared.HttpClient.Service
 
             responseDto.SetSuccess(false);
             responseDto.AddError((int)response.StatusCode, response.ReasonPhrase);
+        }
+
+        private async Task<T> Deserialize<T>(HttpResponseMessage response)
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+
+            var responseData = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(responseData, options);
         }
     }
 }

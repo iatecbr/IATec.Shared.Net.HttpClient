@@ -46,7 +46,7 @@ namespace IATec.Shared.HttpClient.DependencyInjection
 
             if (config.UseRetry && config.UseCircuitBreaker)
             {
-                var retryPolicy = PollyExtensions.RetryPolicy(config.RetryCount, config.RetryDelay, localizer);
+                var retryPolicy = RetryExtensions.RetryPolicy(config.RetryCount, config.RetryDelay, localizer);
 
                 var circuitBreakerPolicy = CircuitBreakerExtensions
                     .CircuitBreakerPolicy(config.CircuitBreakerFailuresAllowedBeforeBreaking, config.CircuitBreakerDuration, localizer);
@@ -57,7 +57,7 @@ namespace IATec.Shared.HttpClient.DependencyInjection
             }
 
             if (config.UseRetry)
-                policy = PollyExtensions.RetryPolicy(config.RetryCount, config.RetryDelay, localizer);
+                policy = RetryExtensions.RetryPolicy(config.RetryCount, config.RetryDelay, localizer);
 
             if (config.UseCircuitBreaker)
                 policy = CircuitBreakerExtensions

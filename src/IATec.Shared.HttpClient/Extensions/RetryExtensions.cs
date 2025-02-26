@@ -8,13 +8,15 @@ using System.Net.Http;
 
 namespace IATec.Shared.HttpClient.Extensions
 {
-    public static class PollyExtensions
+    public static class RetryExtensions
     {
         public static AsyncRetryPolicy<HttpResponseMessage> RetryPolicy(
             int retryCount, TimeSpan retryDelay, IStringLocalizer<Messages> localizer)
         {
             return Policy
-                .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode && r.StatusCode != HttpStatusCode.TooManyRequests)
+                .HandleResult<HttpResponseMessage>(r =>
+                    r.StatusCode == HttpStatusCode.InternalServerError ||
+                    r.StatusCode == HttpStatusCode.RequestTimeout)
                 .WaitAndRetryAsync(
                     retryCount,
                     retryAttempt => retryDelay,
