@@ -117,25 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Circuit breaker aberto por {0} segundos" xml:space="preserve">
-    <value>Circuit breaker aberto por {0} segundos</value>
-  </data>
-  <data name="Circuit breaker meio-aberto" xml:space="preserve">
+  <data name="CircuitBreakerHalfOpen" xml:space="preserve">
     <value>Circuit breaker meio-aberto</value>
   </data>
-  <data name="Circuit breaker reiniciado" xml:space="preserve">
-    <value>Circuit breaker reiniciado</value>
+  <data name="CircuitBreakerOpenedForSeconds" xml:space="preserve">
+    <value>Circuit breaker aberto por {0} segundos</value>
   </data>
-  <data name="CircuitBreaker aberto. Tente novamente mais tarde." xml:space="preserve">
+  <data name="CircuitBreakerOpenTryAgainLater" xml:space="preserve">
     <value>CircuitBreaker aberto. Tente novamente mais tarde. </value>
   </data>
-  <data name="Erro na deserialização" xml:space="preserve">
+  <data name="CircuitBreakerReset" xml:space="preserve">
+    <value>Circuit breaker reiniciado</value>
+  </data>
+  <data name="DeserializationError" xml:space="preserve">
     <value>Erro na deserialização</value>
   </data>
-  <data name="Erro na requisição" xml:space="preserve">
+  <data name="RequestError" xml:space="preserve">
     <value>Erro na requisição</value>
   </data>
-  <data name="Tentativa {0} de reenvio após {1} segundos" xml:space="preserve">
+  <data name="RetryAttemptMessage" xml:space="preserve">
     <value>Tentativa {0} de reenvio após {1} segundos</value>
   </data>
 </root>

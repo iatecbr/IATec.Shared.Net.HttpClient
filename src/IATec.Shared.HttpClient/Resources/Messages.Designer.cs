@@ -61,65 +61,65 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker opened for {0} seconds.
-        /// </summary>
-        public static string Circuit_breaker_aberto_por__0__segundos {
-            get {
-                return ResourceManager.GetString("Circuit breaker aberto por {0} segundos", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker half-open.
         /// </summary>
-        public static string Circuit_breaker_meio_aberto {
+        public static string CircuitBreakerHalfOpen {
             get {
-                return ResourceManager.GetString("Circuit breaker meio-aberto", resourceCulture);
+                return ResourceManager.GetString("CircuitBreakerHalfOpen", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker reset.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker opened for {0} seconds.
         /// </summary>
-        public static string Circuit_breaker_reiniciado {
+        public static string CircuitBreakerOpenedForSeconds {
             get {
-                return ResourceManager.GetString("Circuit breaker reiniciado", resourceCulture);
+                return ResourceManager.GetString("CircuitBreakerOpenedForSeconds", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker open. Please try again later..
         /// </summary>
-        public static string CircuitBreaker_aberto__Tente_novamente_mais_tarde_ {
+        public static string CircuitBreakerOpenTryAgainLater {
             get {
-                return ResourceManager.GetString("CircuitBreaker aberto. Tente novamente mais tarde.", resourceCulture);
+                return ResourceManager.GetString("CircuitBreakerOpenTryAgainLater", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker reset.
+        /// </summary>
+        public static string CircuitBreakerReset {
+            get {
+                return ResourceManager.GetString("CircuitBreakerReset", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Deserialization error.
         /// </summary>
-        public static string Erro_na_deserialização {
+        public static string DeserializationError {
             get {
-                return ResourceManager.GetString("Erro na deserialização", resourceCulture);
+                return ResourceManager.GetString("DeserializationError", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Request error.
         /// </summary>
-        public static string Erro_na_requisição {
+        public static string RequestError {
             get {
-                return ResourceManager.GetString("Erro na requisição", resourceCulture);
+                return ResourceManager.GetString("RequestError", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Retry attempt {0} after {1} sec.
         /// </summary>
-        public static string Tentativa__0__de_reenvio_após__1__segundos {
+        public static string RetryAttemptMessage {
             get {
-                return ResourceManager.GetString("Tentativa {0} de reenvio após {1} segundos", resourceCulture);
+                return ResourceManager.GetString("RetryAttemptMessage", resourceCulture);
             }
         }
     }

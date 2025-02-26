@@ -32,12 +32,12 @@ namespace IATec.Shared.HttpClient.Service
             }
             catch (BrokenCircuitException)
             {
-                responseDto.AddError(_localizer.GetString("CircuitBreaker aberto. Tente novamente mais tarde."));
+                responseDto.AddError(_localizer.GetString(nameof(Messages.CircuitBreakerOpenTryAgainLater)));
                 return responseDto;
             }
             catch (Exception ex)
             {
-                responseDto.AddError($"{_localizer.GetString("Erro na requisição")}: {ex.Message}");
+                responseDto.AddError($"{_localizer.GetString(nameof(Messages.RequestError))}: {ex.Message}");
                 return responseDto;
             }
 
@@ -59,7 +59,7 @@ namespace IATec.Shared.HttpClient.Service
             }
             catch (Exception ex)
             {
-                responseDto.AddError($"{_localizer.GetString("Erro na deserialização")}: {ex.Message}");
+                responseDto.AddError($"{_localizer.GetString(nameof(Messages.DeserializationError))}: {ex.Message}");
                 responseDto.SetSuccess(false);
             }
 

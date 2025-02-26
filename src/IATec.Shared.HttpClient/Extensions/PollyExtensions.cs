@@ -21,7 +21,7 @@ namespace IATec.Shared.HttpClient.Extensions
                     onRetry: (outcome, timespan, retryAttempt, context) =>
                     {
                         Console.WriteLine(localizer
-                            .GetString("Tentativa {0} de reenvio após {1} segundos", retryAttempt, timespan.TotalSeconds));
+                            .GetString(nameof(Messages.RetryAttemptMessage), retryAttempt, timespan.TotalSeconds));
                     });
         }
     }

@@ -17,15 +17,15 @@ namespace IATec.Shared.HttpClient.Extensions
                 .CircuitBreakerAsync(allowedBeforeBreaking, circuitBreakerDuration,
                     onBreak: (outcome, breakDelay) =>
                     {
-                        Console.WriteLine(localizer.GetString("Circuit breaker opened for {0} seconds", breakDelay.TotalSeconds));
+                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerOpenedForSeconds), breakDelay.TotalSeconds));
                     },
                     onReset: () =>
                     {
-                        Console.WriteLine(localizer.GetString("Circuit breaker reset"));
+                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerReset)));
                     },
                     onHalfOpen: () =>
                     {
-                        Console.WriteLine(localizer.GetString("Circuit breaker half-open"));
+                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerHalfOpen)));
                     });
         }
     }
