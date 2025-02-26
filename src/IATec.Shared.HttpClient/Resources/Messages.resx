@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Circuit breaker aberto por {0} segundos" xml:space="preserve">
+    <value>Circuit breaker opened for {0} seconds</value>
+  </data>
+  <data name="Circuit breaker meio-aberto" xml:space="preserve">
+    <value>Circuit breaker half-open</value>
+  </data>
+  <data name="Circuit breaker reiniciado" xml:space="preserve">
+    <value>Circuit breaker reset</value>
+  </data>
   <data name="CircuitBreaker aberto. Tente novamente mais tarde." xml:space="preserve">
     <value>Circuit breaker open. Please try again later.</value>
   </data>
@@ -125,5 +134,8 @@
   </data>
   <data name="Erro na requisição" xml:space="preserve">
     <value>Request error</value>
+  </data>
+  <data name="Tentativa {0} de reenvio após {1} segundos" xml:space="preserve">
+    <value>Retry attempt {0} after {1} sec</value>
   </data>
 </root>

@@ -1,4 +1,6 @@
-﻿using Polly;
+﻿using IATec.Shared.HttpClient.Resources;
+using Microsoft.Extensions.Localization;
+using Polly;
 using Polly.Retry;
 using System;
 using System.Net;
@@ -8,7 +10,8 @@ namespace IATec.Shared.HttpClient.Extensions
 {
     public static class PollyExtensions
     {
-        public static AsyncRetryPolicy<HttpResponseMessage> RetryPolicy(int retryCount, TimeSpan retryDelay)
+        public static AsyncRetryPolicy<HttpResponseMessage> RetryPolicy(
+            int retryCount, TimeSpan retryDelay, IStringLocalizer<Messages> localizer)
         {
             return Policy
                 .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode && r.StatusCode != HttpStatusCode.TooManyRequests)
@@ -17,7 +20,8 @@ namespace IATec.Shared.HttpClient.Extensions
                     retryAttempt => retryDelay,
                     onRetry: (outcome, timespan, retryAttempt, context) =>
                     {
-                        Console.WriteLine($"Retry attempt {retryAttempt} after {timespan.TotalSeconds} sec");
+                        Console.WriteLine(localizer
+                            .GetString("Tentativa {0} de reenvio após {1} segundos", retryAttempt, timespan.TotalSeconds));
                     });
         }
     }

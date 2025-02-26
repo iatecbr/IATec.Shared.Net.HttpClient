@@ -22,7 +22,7 @@ namespace IATec.Shared.HttpClient.Service
 
         public async Task<ResponseDto<T>> GetAsync<T>(string url) where T : class
         {
-            var responseDto = new ResponseDto<T>(false);
+            var responseDto = new ResponseDto<T>();
 
             HttpResponseMessage response;
 
@@ -32,12 +32,12 @@ namespace IATec.Shared.HttpClient.Service
             }
             catch (BrokenCircuitException)
             {
-                responseDto.AddError(_localizer.GetString(ErrorMessages.CircuitBreakerIsOpen));
+                responseDto.AddError(_localizer.GetString("CircuitBreaker aberto. Tente novamente mais tarde."));
                 return responseDto;
             }
             catch (Exception ex)
             {
-                responseDto.AddError($"{_localizer.GetString(ErrorMessages.RequestError)}: {ex.Message}");
+                responseDto.AddError($"{_localizer.GetString("Erro na requisição")}: {ex.Message}");
                 return responseDto;
             }
 
@@ -47,14 +47,19 @@ namespace IATec.Shared.HttpClient.Service
 
                 if (responseDto.Success)
                 {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    };
+
                     var responseData = await response.Content.ReadAsStringAsync();
-                    var data = JsonSerializer.Deserialize<T>(responseData);
+                    var data = JsonSerializer.Deserialize<T>(responseData, options);
                     responseDto.SetData(data);
                 }
             }
             catch (Exception ex)
             {
-                responseDto.AddError($"{_localizer.GetString(ErrorMessages.DeserializationError)}: {ex.Message}");
+                responseDto.AddError($"{_localizer.GetString("Erro na deserialização")}: {ex.Message}");
                 responseDto.SetSuccess(false);
             }
 

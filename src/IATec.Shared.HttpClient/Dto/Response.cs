@@ -4,23 +4,19 @@ namespace IATec.Shared.HttpClient.Dto
 {
     public class ResponseDto<T>
     {
-        internal ResponseDto(bool success)
-        {
-            Success = success;
-        }
-
-        public bool Success { get; set; }
-        public T Data { get; set; }
-        public List<ErrorDto> Errors { get; set; } = new List<ErrorDto>();
+        public bool Success { get; private set; }
+        public T Data { get; private set; }
+        private readonly List<ErrorDto> _errors = new List<ErrorDto>();
+        public IReadOnlyList<ErrorDto> Errors => _errors.AsReadOnly();
 
         internal void AddError(string message)
         {
-            Errors.Add(new ErrorDto(message));
+            _errors.Add(new ErrorDto(message));
         }
 
         internal void AddError(int? statusCode, string message)
         {
-            Errors.Add(new ErrorDto(message, statusCode));
+            _errors.Add(new ErrorDto(message, statusCode));
         }
 
         internal void SetData(T data)

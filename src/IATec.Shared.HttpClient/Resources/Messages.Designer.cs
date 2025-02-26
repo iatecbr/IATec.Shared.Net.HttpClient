@@ -61,6 +61,33 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker opened for {0} seconds.
+        /// </summary>
+        public static string Circuit_breaker_aberto_por__0__segundos {
+            get {
+                return ResourceManager.GetString("Circuit breaker aberto por {0} segundos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker half-open.
+        /// </summary>
+        public static string Circuit_breaker_meio_aberto {
+            get {
+                return ResourceManager.GetString("Circuit breaker meio-aberto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker reset.
+        /// </summary>
+        public static string Circuit_breaker_reiniciado {
+            get {
+                return ResourceManager.GetString("Circuit breaker reiniciado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker open. Please try again later..
         /// </summary>
         public static string CircuitBreaker_aberto__Tente_novamente_mais_tarde_ {
@@ -84,6 +111,15 @@ namespace IATec.Shared.HttpClient.Resources {
         public static string Erro_na_requisição {
             get {
                 return ResourceManager.GetString("Erro na requisição", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Retry attempt {0} after {1} sec.
+        /// </summary>
+        public static string Tentativa__0__de_reenvio_após__1__segundos {
+            get {
+                return ResourceManager.GetString("Tentativa {0} de reenvio após {1} segundos", resourceCulture);
             }
         }
     }
