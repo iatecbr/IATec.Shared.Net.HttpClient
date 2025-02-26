@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using Polly;
 using Polly.Retry;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 
@@ -14,9 +15,7 @@ namespace IATec.Shared.HttpClient.Extensions
             int retryCount, TimeSpan retryDelay, IStringLocalizer<Messages> localizer)
         {
             return Policy
-                .HandleResult<HttpResponseMessage>(r =>
-                    r.StatusCode == HttpStatusCode.InternalServerError ||
-                    r.StatusCode == HttpStatusCode.RequestTimeout)
+                .HandleResult<HttpResponseMessage>(r => HandleRequestResult(r.StatusCode))
                 .WaitAndRetryAsync(
                     retryCount,
                     retryAttempt => retryDelay,
@@ -25,6 +24,20 @@ namespace IATec.Shared.HttpClient.Extensions
                         Console.WriteLine(localizer
                             .GetString(nameof(Messages.RetryAttemptMessage), retryAttempt, timespan.TotalSeconds));
                     });
+        }
+
+        private static bool HandleRequestResult(HttpStatusCode statusCode)
+        {
+            HttpStatusCode[] transientStatusCodes = new[]
+            {
+                HttpStatusCode.InternalServerError,
+                HttpStatusCode.BadGateway,
+                HttpStatusCode.ServiceUnavailable,
+                HttpStatusCode.GatewayTimeout,
+                HttpStatusCode.RequestTimeout
+            };
+
+            return transientStatusCodes.Contains(statusCode);
         }
     }
 }
