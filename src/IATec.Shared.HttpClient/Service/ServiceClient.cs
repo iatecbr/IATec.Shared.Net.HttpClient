@@ -11,7 +11,7 @@ namespace IATec.Shared.HttpClient.Service
 {
     public class ServiceClient : IServiceClient
     {
-        private System.Net.Http.HttpClient _httpClient;
+        private readonly System.Net.Http.HttpClient _httpClient;
         private readonly IStringLocalizer<Messages> _localizer;
 
         public ServiceClient(System.Net.Http.HttpClient httpClient, IStringLocalizer<Messages> localizer)
