@@ -4,6 +4,7 @@ namespace IATec.Shared.HttpClient.Configurations
 {
     /// <summary>
     /// Represents the configuration settings for HttpClient policies, including Retry and Circuit Breaker.
+    /// TooManyRequest status code is handled by default on Circuit Breaker. 
     /// </summary>
     public class HttpClientPolicyConfiguration
     {

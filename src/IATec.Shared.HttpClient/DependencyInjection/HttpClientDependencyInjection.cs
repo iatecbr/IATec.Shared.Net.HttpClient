@@ -17,7 +17,7 @@ namespace IATec.Shared.HttpClient.DependencyInjection
             this IServiceCollection services,
             Action<HttpClientPolicyConfiguration> configurePolicy)
         {
-            if (!services.Any(sd => sd.ServiceType == typeof(IStringLocalizerFactory)))
+            if (services.All(sd => sd.ServiceType != typeof(IStringLocalizerFactory)))
                 services.AddLocalization(options => options.ResourcesPath = "");
 
             var config = new HttpClientPolicyConfiguration();
@@ -31,10 +31,8 @@ namespace IATec.Shared.HttpClient.DependencyInjection
             });
 
             services.AddHttpClient<IServiceClient, ServiceClient>()
-                .AddPolicyHandler((serviceProvider, request) =>
-                {
-                    return serviceProvider.GetRequiredService<IAsyncPolicy<HttpResponseMessage>>();
-                });
+                .AddPolicyHandler((serviceProvider, request) => 
+                    serviceProvider.GetRequiredService<IAsyncPolicy<HttpResponseMessage>>());
 
             return services;
         }
@@ -44,14 +42,18 @@ namespace IATec.Shared.HttpClient.DependencyInjection
         {
             IAsyncPolicy<HttpResponseMessage> policy = Policy.NoOpAsync<HttpResponseMessage>();
 
-            if (config.UseRetry && config.UseCircuitBreaker)
+            if (config is { UseRetry: true, UseCircuitBreaker: true })
             {
                 var retryPolicy = RetryExtensions.RetryPolicy(config.RetryCount, config.RetryDelay, localizer);
 
                 var circuitBreakerPolicy = CircuitBreakerExtensions
                     .CircuitBreakerPolicy(config.CircuitBreakerFailuresAllowedBeforeBreaking, config.CircuitBreakerDuration, localizer);
+                
+                var circuitBreakerTooManyRequestPolicy = CircuitBreakerExtensions
+                    .CircuitBreakerTooManyRequestPolicy(config.CircuitBreakerDuration, localizer);
 
-                policy = Policy.WrapAsync(retryPolicy, circuitBreakerPolicy);
+                policy = Policy.WrapAsync(retryPolicy, circuitBreakerPolicy, 
+                    circuitBreakerTooManyRequestPolicy);
 
                 return policy;
             }
@@ -59,9 +61,17 @@ namespace IATec.Shared.HttpClient.DependencyInjection
             if (config.UseRetry)
                 policy = RetryExtensions.RetryPolicy(config.RetryCount, config.RetryDelay, localizer);
 
-            if (config.UseCircuitBreaker)
-                policy = CircuitBreakerExtensions
+            if (!config.UseCircuitBreaker) return policy;
+            {
+                var circuitBreakerPolicy = CircuitBreakerExtensions
                     .CircuitBreakerPolicy(config.CircuitBreakerFailuresAllowedBeforeBreaking, config.CircuitBreakerDuration, localizer);
+                
+                var circuitBreakerTooManyRequestPolicy = CircuitBreakerExtensions
+                    .CircuitBreakerTooManyRequestPolicy(config.CircuitBreakerDuration, localizer);
+
+                policy = Policy.WrapAsync(circuitBreakerPolicy, 
+                    circuitBreakerTooManyRequestPolicy);
+            }
 
             return policy;
         }

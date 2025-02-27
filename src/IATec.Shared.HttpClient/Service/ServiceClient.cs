@@ -69,7 +69,7 @@ namespace IATec.Shared.HttpClient.Service
             responseDto.AddError((int)response.StatusCode, response.ReasonPhrase);
         }
 
-        private async Task<T> Deserialize<T>(HttpResponseMessage response)
+        private static async Task<T> Deserialize<T>(HttpResponseMessage response)
         {
             var options = new JsonSerializerOptions
             {
@@ -77,7 +77,7 @@ namespace IATec.Shared.HttpClient.Service
             };
 
             var responseData = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<T>(responseData, options);
+            return JsonSerializer.Deserialize<T>(responseData, options)!;
         }
     }
 }

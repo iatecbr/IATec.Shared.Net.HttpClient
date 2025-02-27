@@ -3,7 +3,6 @@ using Microsoft.Extensions.Localization;
 using Polly;
 using Polly.CircuitBreaker;
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 
@@ -14,12 +13,15 @@ namespace IATec.Shared.HttpClient.Extensions
         public static AsyncCircuitBreakerPolicy<HttpResponseMessage> CircuitBreakerPolicy(
             int allowedBeforeBreaking, TimeSpan circuitBreakerDuration, IStringLocalizer<Messages> localizer)
         {
-            return Policy
-                .HandleResult<HttpResponseMessage>(r => HandleRequestResult(r.StatusCode))
+            return Policy<HttpResponseMessage>
+                .Handle<HttpRequestException>()
+                .OrResult(response => response.StatusCode >= HttpStatusCode.InternalServerError ||
+                                      response.StatusCode == HttpStatusCode.RequestTimeout)
                 .CircuitBreakerAsync(allowedBeforeBreaking, circuitBreakerDuration,
                     onBreak: (outcome, breakDelay) =>
                     {
-                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerOpenedForSeconds), breakDelay.TotalSeconds));
+                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerOpenedForSeconds), 
+                            breakDelay.TotalSeconds));
                     },
                     onReset: () =>
                     {
@@ -30,15 +32,27 @@ namespace IATec.Shared.HttpClient.Extensions
                         Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerHalfOpen)));
                     });
         }
-
-        private static bool HandleRequestResult(HttpStatusCode statusCode)
+        
+        public static AsyncCircuitBreakerPolicy<HttpResponseMessage> CircuitBreakerTooManyRequestPolicy(
+            TimeSpan circuitBreakerDuration, IStringLocalizer<Messages> localizer)
         {
-            HttpStatusCode[] breakerStatusCodes = new[]
-            {
-                HttpStatusCode.TooManyRequests
-            };
 
-            return breakerStatusCodes.Contains(statusCode);
+            return Policy
+                .HandleResult<HttpResponseMessage>(r => r.StatusCode == HttpStatusCode.TooManyRequests)
+                .CircuitBreakerAsync(1, circuitBreakerDuration,
+                    onBreak: (outcome, breakDelay) =>
+                    {
+                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerOpenedForSeconds),
+                                              breakDelay.TotalSeconds));
+                    },
+                    onReset: () =>
+                    {
+                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerReset)));
+                    },
+                    onHalfOpen: () =>
+                    {
+                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerHalfOpen)));
+                    });
         }
     }
 }
