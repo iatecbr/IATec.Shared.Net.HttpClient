@@ -10,9 +10,9 @@ using Microsoft.Extensions.Localization;
 using Polly;
 
 namespace IATec.Shared.HttpClient.DependencyInjection
-{
+{   
     public static class HttpClientDependencyInjection
-    {
+    {   
         public static IServiceCollection AddHttpClientService(
             this IServiceCollection services,
             Action<HttpClientPolicyConfiguration> configurePolicy)
@@ -30,8 +30,12 @@ namespace IATec.Shared.HttpClient.DependencyInjection
                 return GetCombinedPolicy(config, localizer);
             });
 
-            services.AddHttpClient<IServiceClient, ServiceClient>()
-                .AddPolicyHandler((serviceProvider, request) => 
+            services.AddHttpClient<IServiceClient, ServiceClient>(client =>
+                {
+                    foreach (var keyValuePair in config.Headers)
+                        client.DefaultRequestHeaders.Add(keyValuePair.Key, keyValuePair.Value);
+                })
+                .AddPolicyHandler((serviceProvider, request) =>
                     serviceProvider.GetRequiredService<IAsyncPolicy<HttpResponseMessage>>());
 
             return services;
@@ -47,12 +51,13 @@ namespace IATec.Shared.HttpClient.DependencyInjection
                 var retryPolicy = RetryExtensions.RetryPolicy(config.RetryCount, config.RetryDelay, localizer);
 
                 var circuitBreakerPolicy = CircuitBreakerExtensions
-                    .CircuitBreakerPolicy(config.CircuitBreakerFailuresAllowedBeforeBreaking, config.CircuitBreakerDuration, localizer);
-                
+                    .CircuitBreakerPolicy(config.CircuitBreakerFailuresAllowedBeforeBreaking,
+                        config.CircuitBreakerDuration, localizer);
+
                 var circuitBreakerTooManyRequestPolicy = CircuitBreakerExtensions
                     .CircuitBreakerTooManyRequestPolicy(config.CircuitBreakerDuration, localizer);
 
-                policy = Policy.WrapAsync(retryPolicy, circuitBreakerPolicy, 
+                policy = Policy.WrapAsync(retryPolicy, circuitBreakerPolicy,
                     circuitBreakerTooManyRequestPolicy);
 
                 return policy;
@@ -64,12 +69,13 @@ namespace IATec.Shared.HttpClient.DependencyInjection
             if (!config.UseCircuitBreaker) return policy;
             {
                 var circuitBreakerPolicy = CircuitBreakerExtensions
-                    .CircuitBreakerPolicy(config.CircuitBreakerFailuresAllowedBeforeBreaking, config.CircuitBreakerDuration, localizer);
-                
+                    .CircuitBreakerPolicy(config.CircuitBreakerFailuresAllowedBeforeBreaking,
+                        config.CircuitBreakerDuration, localizer);
+
                 var circuitBreakerTooManyRequestPolicy = CircuitBreakerExtensions
                     .CircuitBreakerTooManyRequestPolicy(config.CircuitBreakerDuration, localizer);
 
-                policy = Policy.WrapAsync(circuitBreakerPolicy, 
+                policy = Policy.WrapAsync(circuitBreakerPolicy,
                     circuitBreakerTooManyRequestPolicy);
             }
 

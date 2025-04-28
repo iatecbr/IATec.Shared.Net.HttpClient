@@ -18,13 +18,13 @@ namespace IATec.Shared.HttpClient.Dto
         {
             _errors.Add(new ErrorDto(message, statusCode));
         }
-        
+
         internal void AddRangeError(int? statusCode, List<string> message)
         {
             var errorList = message
                 .Select(messageError => new ErrorDto(messageError, statusCode))
                 .ToList();
-            
+
             _errors.AddRange(errorList);
         }
 

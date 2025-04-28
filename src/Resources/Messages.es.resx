@@ -123,24 +123,24 @@
         </value>
     </resheader>
     <data name="CircuitBreakerHalfOpen" xml:space="preserve">
-    <value>Circuit breaker meio-aberto</value>
+    <value>Interruptor de circuito medio-abierto</value>
   </data>
     <data name="CircuitBreakerOpenedForSeconds" xml:space="preserve">
-    <value>Circuit breaker aberto por {0} segundos</value>
+    <value>Interruptor de circuito abierto por {0} segundos</value>
   </data>
     <data name="CircuitBreakerOpenTryAgainLater" xml:space="preserve">
-    <value>CircuitBreaker aberto. Tente novamente mais tarde. </value>
+    <value>Circuit breaker abierto. Inténtelo de nuevo más tarde.</value>
   </data>
     <data name="CircuitBreakerReset" xml:space="preserve">
-    <value>Circuit breaker reiniciado</value>
+    <value>Interruptor de circuito reiniciado</value>
   </data>
     <data name="DeserializationError" xml:space="preserve">
-    <value>Erro na deserialização</value>
+    <value>Error en la deserialización</value>
   </data>
     <data name="RequestError" xml:space="preserve">
-    <value>Erro na requisição</value>
+    <value>Error en la solicitud</value>
   </data>
     <data name="RetryAttemptMessage" xml:space="preserve">
-    <value>Tentativa {0} de reenvio após {1} segundos</value>
+    <value>Reintento {0} después de {1} segundos</value>
   </data>
 </root>
