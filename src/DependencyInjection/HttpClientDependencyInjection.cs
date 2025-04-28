@@ -30,11 +30,7 @@ namespace IATec.Shared.HttpClient.DependencyInjection
                 return GetCombinedPolicy(config, localizer);
             });
 
-            services.AddHttpClient<IServiceClient, ServiceClient>(client =>
-                {
-                    foreach (var keyValuePair in config.Headers)
-                        client.DefaultRequestHeaders.Add(keyValuePair.Key, keyValuePair.Value);
-                })
+            services.AddHttpClient<IServiceClient, ServiceClient>()
                 .AddPolicyHandler((serviceProvider, request) =>
                     serviceProvider.GetRequiredService<IAsyncPolicy<HttpResponseMessage>>());
 
