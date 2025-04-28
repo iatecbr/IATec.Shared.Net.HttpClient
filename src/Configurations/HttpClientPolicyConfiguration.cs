@@ -44,10 +44,5 @@ namespace IATec.Shared.HttpClient.Configurations
         /// Default value: 30 seconds.
         /// </summary>
         public TimeSpan CircuitBreakerDuration { get; set; } = TimeSpan.FromSeconds(30);
-
-        /// <summary>
-        /// Gets or sets the headers to be added to the HttpClient requests.
-        /// </summary>
-        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
     }
 }
