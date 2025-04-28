@@ -18,41 +18,28 @@ namespace IATec.Shared.HttpClient.Extensions
                 .OrResult(response => response.StatusCode >= HttpStatusCode.InternalServerError ||
                                       response.StatusCode == HttpStatusCode.RequestTimeout)
                 .CircuitBreakerAsync(allowedBeforeBreaking, circuitBreakerDuration,
-                    onBreak: (outcome, breakDelay) =>
+                    (outcome, breakDelay) =>
                     {
-                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerOpenedForSeconds), 
+                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerOpenedForSeconds),
                             breakDelay.TotalSeconds));
                     },
-                    onReset: () =>
-                    {
-                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerReset)));
-                    },
-                    onHalfOpen: () =>
-                    {
-                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerHalfOpen)));
-                    });
+                    () => { Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerReset))); },
+                    () => { Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerHalfOpen))); });
         }
-        
+
         public static AsyncCircuitBreakerPolicy<HttpResponseMessage> CircuitBreakerTooManyRequestPolicy(
             TimeSpan circuitBreakerDuration, IStringLocalizer<Messages> localizer)
         {
-
             return Policy
                 .HandleResult<HttpResponseMessage>(r => r.StatusCode == HttpStatusCode.TooManyRequests)
                 .CircuitBreakerAsync(1, circuitBreakerDuration,
-                    onBreak: (outcome, breakDelay) =>
+                    (outcome, breakDelay) =>
                     {
                         Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerOpenedForSeconds),
-                                              breakDelay.TotalSeconds));
+                            breakDelay.TotalSeconds));
                     },
-                    onReset: () =>
-                    {
-                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerReset)));
-                    },
-                    onHalfOpen: () =>
-                    {
-                        Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerHalfOpen)));
-                    });
+                    () => { Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerReset))); },
+                    () => { Console.WriteLine(localizer.GetString(nameof(Messages.CircuitBreakerHalfOpen))); });
         }
     }
 }

@@ -20,7 +20,7 @@ namespace IATec.Shared.HttpClient.Extensions
                 .WaitAndRetryAsync(
                     retryCount,
                     retryAttempt => retryDelay,
-                    onRetry: (outcome, timespan, retryAttempt, context) =>
+                    (outcome, timespan, retryAttempt, context) =>
                     {
                         Console.WriteLine(localizer
                             .GetString(nameof(Messages.RetryAttemptMessage), retryAttempt, timespan.TotalSeconds));

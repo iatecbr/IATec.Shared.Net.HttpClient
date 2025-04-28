@@ -56,7 +56,7 @@ namespace IATec.Shared.HttpClient.Service
 
             return responseDto;
         }
-        
+
         public async Task<ResponseDto<T>> PostAsync<T>(string url, HttpContent content) where T : class
         {
             var responseDto = new ResponseDto<T>();
@@ -66,7 +66,7 @@ namespace IATec.Shared.HttpClient.Service
             {
                 response = await _httpClient.PostAsync(url, content);
             }
-            catch (BrokenCircuitException ex)
+            catch (BrokenCircuitException)
             {
                 responseDto.AddError(_localizer.GetString(nameof(Messages.CircuitBreakerOpenTryAgainLater)));
                 return responseDto;
@@ -80,7 +80,7 @@ namespace IATec.Shared.HttpClient.Service
             try
             {
                 await HandleResponse(response, responseDto);
-                
+
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
             }
@@ -102,7 +102,7 @@ namespace IATec.Shared.HttpClient.Service
             {
                 response = await _httpClient.PostAsync(url, content);
             }
-            catch (BrokenCircuitException ex)
+            catch (BrokenCircuitException)
             {
                 responseDto.AddError(_localizer.GetString(nameof(Messages.CircuitBreakerOpenTryAgainLater)));
                 return responseDto;
@@ -133,10 +133,10 @@ namespace IATec.Shared.HttpClient.Service
                 responseDto.SetSuccess(true);
                 return;
             }
-            
+
             responseDto.SetSuccess(false);
             var errorResponseDto = await Deserialize<ErrorResponseDto>(response);
-            
+
             responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
         }
 
@@ -144,7 +144,7 @@ namespace IATec.Shared.HttpClient.Service
         {
             var options = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true,
+                PropertyNameCaseInsensitive = true
             };
 
             var responseData = await response.Content.ReadAsStringAsync();
