@@ -11,5 +11,9 @@ namespace IATec.Shared.HttpClient.Service
         Task<ResponseDto<T>> PostAsync<T>(string url, HttpContent content) where T : class;
 
         Task<BaseResponseDto> PostAsync(string url, HttpContent content);
+
+        Task<ResponseDto<T>> PutAsync<T>(string url, HttpContent content) where T : class;
+
+        Task<BaseResponseDto> PutAsync(string url, HttpContent content);
     }
 }

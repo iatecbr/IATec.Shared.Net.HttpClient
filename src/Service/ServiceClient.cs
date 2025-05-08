@@ -126,6 +126,75 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
+        public async Task<ResponseDto<T>> PutAsync<T>(string url, HttpContent content) where T : class
+        {
+            var responseDto = new ResponseDto<T>();
+            HttpResponseMessage response;
+
+            try
+            {
+                response = await _httpClient.PutAsync(url, content);
+            }
+            catch (BrokenCircuitException)
+            {
+                responseDto.AddError(_localizer.GetString(nameof(Messages.CircuitBreakerOpenTryAgainLater)));
+                return responseDto;
+            }
+            catch (Exception ex)
+            {
+                responseDto.AddError($"{_localizer.GetString(nameof(Messages.RequestError))}: {ex.Message}");
+                return responseDto;
+            }
+
+            try
+            {
+                await HandleResponse(response, responseDto);
+
+                if (responseDto.Success)
+                    responseDto.SetData(await Deserialize<T>(response));
+            }
+            catch (Exception ex)
+            {
+                responseDto.AddError($"{_localizer.GetString(nameof(Messages.DeserializationError))}: {ex.Message}");
+                responseDto.SetSuccess(false);
+            }
+
+            return responseDto;
+        }
+
+        public async Task<BaseResponseDto> PutAsync(string url, HttpContent content)
+        {
+            var responseDto = new BaseResponseDto();
+            HttpResponseMessage response;
+
+            try
+            {
+                response = await _httpClient.PutAsync(url, content);
+            }
+            catch (BrokenCircuitException)
+            {
+                responseDto.AddError(_localizer.GetString(nameof(Messages.CircuitBreakerOpenTryAgainLater)));
+                return responseDto;
+            }
+            catch (Exception ex)
+            {
+                responseDto.AddError($"{_localizer.GetString(nameof(Messages.RequestError))}: {ex.Message}");
+                return responseDto;
+            }
+
+            try
+            {
+                await HandleResponse(response, responseDto);
+            }
+            catch (Exception ex)
+            {
+                responseDto.AddError($"{_localizer.GetString(nameof(Messages.DeserializationError))}: {ex.Message}");
+                responseDto.SetSuccess(false);
+            }
+
+            return responseDto;
+        }
+
         private static async Task HandleResponse(HttpResponseMessage response, BaseResponseDto responseDto)
         {
             if (response.IsSuccessStatusCode)
