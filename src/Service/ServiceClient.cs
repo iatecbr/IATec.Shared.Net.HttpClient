@@ -57,6 +57,50 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
+        public async Task<ResponseDto<string>> GetStringAsync(string url)
+        {
+            var responseDto = new ResponseDto<string>();
+
+            HttpResponseMessage response;
+
+            try
+            {
+                response = await _httpClient.GetAsync(url);
+            }
+            catch (BrokenCircuitException)
+            {
+                responseDto.AddError(_localizer.GetString(nameof(Messages.CircuitBreakerOpenTryAgainLater)));
+                return responseDto;
+            }
+            catch (Exception ex)
+            {
+                responseDto.AddError($"{_localizer.GetString(nameof(Messages.RequestError))}: {ex.Message}");
+                return responseDto;
+            }
+
+            try
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    responseDto.SetData(content);
+                    responseDto.SetSuccess(true);
+                }
+                else
+                {
+                    responseDto.SetSuccess(false);
+                    responseDto.AddError($"{_localizer.GetString(nameof(Messages.RequestError))}: {response.ReasonPhrase}");
+                }
+            }
+            catch (Exception ex)
+            {
+                responseDto.AddError($"{_localizer.GetString(nameof(Messages.DeserializationError))}: {ex.Message}");
+                responseDto.SetSuccess(false);
+            }
+
+            return responseDto;
+        }
+
         public async Task<ResponseDto<T>> PostAsync<T>(string url, HttpContent content) where T : class
         {
             var responseDto = new ResponseDto<T>();
