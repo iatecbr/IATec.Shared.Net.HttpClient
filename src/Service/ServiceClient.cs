@@ -3,6 +3,7 @@ using IATec.Shared.HttpClient.Resources;
 using Microsoft.Extensions.Localization;
 using Polly.CircuitBreaker;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponse(response, responseDto, _localizer);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -123,7 +124,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponse(response, responseDto, _localizer);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -159,7 +160,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponse(response, responseDto, _localizer);
             }
             catch (Exception ex)
             {
@@ -192,7 +193,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponse(response, responseDto, _localizer);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -228,7 +229,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponse(response, responseDto, _localizer);
             }
             catch (Exception ex)
             {
@@ -261,7 +262,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponse(response, responseDto, _localizer);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -297,7 +298,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponse(response, responseDto, _localizer);
             }
             catch (Exception ex)
             {
@@ -308,7 +309,7 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
-        private static async Task HandleResponse(HttpResponseMessage response, BaseResponseDto responseDto)
+        private static async Task HandleResponse(HttpResponseMessage response, BaseResponseDto responseDto, IStringLocalizer<Messages> _localizer)
         {
             if (response.IsSuccessStatusCode)
             {
@@ -316,7 +317,19 @@ namespace IATec.Shared.HttpClient.Service
                 return;
             }
 
-            responseDto.SetSuccess(false);
+            var statusCodeMessages = new Dictionary<System.Net.HttpStatusCode, string>
+            {
+                { System.Net.HttpStatusCode.Unauthorized, _localizer.GetString(nameof(Messages.Unauthorized)) },
+                { System.Net.HttpStatusCode.NotFound, _localizer.GetString(nameof(Messages.NotFound)) },
+                { System.Net.HttpStatusCode.Forbidden, _localizer.GetString(nameof(Messages.Forbidden)) }
+            };
+
+            if (statusCodeMessages.TryGetValue(response.StatusCode, out var localizedMessage))
+            {
+                responseDto.AddError(localizedMessage);
+                return;
+            }
+
             var errorResponseDto = await Deserialize<ErrorResponseDto>(response);
 
             responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
@@ -331,6 +344,6 @@ namespace IATec.Shared.HttpClient.Service
 
             var responseData = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseData, options)!;
-        }
+        }       
     }
 }
