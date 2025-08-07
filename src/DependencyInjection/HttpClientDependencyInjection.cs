@@ -1,18 +1,18 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http;
-using IATec.Shared.HttpClient.Configurations;
+﻿using IATec.Shared.HttpClient.Configurations;
 using IATec.Shared.HttpClient.Extensions;
 using IATec.Shared.HttpClient.Resources;
 using IATec.Shared.HttpClient.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Polly;
+using System;
+using System.Linq;
+using System.Net.Http;
 
 namespace IATec.Shared.HttpClient.DependencyInjection
-{   
+{
     public static class HttpClientDependencyInjection
-    {   
+    {
         public static IServiceCollection AddHttpClientService(
             this IServiceCollection services,
             Action<HttpClientPolicyConfiguration> configurePolicy)

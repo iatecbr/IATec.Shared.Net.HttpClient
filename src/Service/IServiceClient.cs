@@ -1,5 +1,5 @@
-﻿using System.Net.Http;
-using IATec.Shared.HttpClient.Dto;
+﻿using IATec.Shared.HttpClient.Dto;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace IATec.Shared.HttpClient.Service
