@@ -309,7 +309,11 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
-        private static async Task HandleResponse(HttpResponseMessage response, BaseResponseDto responseDto, IStringLocalizer<Messages> _localizer)
+        private static async Task HandleResponse(
+            HttpResponseMessage response,
+            BaseResponseDto responseDto,
+            IStringLocalizer<Messages> localizer
+        )
         {
             if (response.IsSuccessStatusCode)
             {
@@ -319,9 +323,9 @@ namespace IATec.Shared.HttpClient.Service
 
             var statusCodeMessages = new Dictionary<System.Net.HttpStatusCode, string>
             {
-                { System.Net.HttpStatusCode.Unauthorized, _localizer.GetString(nameof(Messages.Unauthorized)) },
-                { System.Net.HttpStatusCode.NotFound, _localizer.GetString(nameof(Messages.NotFound)) },
-                { System.Net.HttpStatusCode.Forbidden, _localizer.GetString(nameof(Messages.Forbidden)) }
+                { System.Net.HttpStatusCode.Unauthorized, localizer.GetString(nameof(Messages.Unauthorized)) },
+                { System.Net.HttpStatusCode.NotFound, localizer.GetString(nameof(Messages.NotFound)) },
+                { System.Net.HttpStatusCode.Forbidden, localizer.GetString(nameof(Messages.Forbidden)) }
             };
 
             if (statusCodeMessages.TryGetValue(response.StatusCode, out var localizedMessage))
@@ -344,6 +348,6 @@ namespace IATec.Shared.HttpClient.Service
 
             var responseData = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseData, options)!;
-        }       
+        }
     }
 }

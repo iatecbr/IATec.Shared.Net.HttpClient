@@ -118,33 +118,33 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CircuitBreakerHalfOpen" xml:space="preserve">
-    <value>Circuit breaker meio-aberto</value>
+    <value>Circuit breaker meio-aberto.</value>
   </data>
   <data name="CircuitBreakerOpenedForSeconds" xml:space="preserve">
-    <value>Circuit breaker aberto por {0} segundos</value>
+    <value>Circuit breaker aberto por {0} segundos.</value>
   </data>
   <data name="CircuitBreakerOpenTryAgainLater" xml:space="preserve">
     <value>CircuitBreaker aberto. Tente novamente mais tarde. </value>
   </data>
   <data name="CircuitBreakerReset" xml:space="preserve">
-    <value>Circuit breaker reiniciado</value>
+    <value>Circuit breaker reiniciado.</value>
   </data>
   <data name="DeserializationError" xml:space="preserve">
-    <value>Erro na deserialização</value>
+    <value>Erro na deserialização.</value>
   </data>
   <data name="Forbidden" xml:space="preserve">
-    <value> Não permitido.</value>
+    <value>Não Autorizado.</value>
   </data>
   <data name="NotFound" xml:space="preserve">
-    <value>Não encontrado</value>
+    <value>Não Encontrado.</value>
   </data>
   <data name="RequestError" xml:space="preserve">
-    <value>Erro na requisição</value>
+    <value>Erro na requisição.</value>
   </data>
   <data name="RetryAttemptMessage" xml:space="preserve">
-    <value>Tentativa {0} de reenvio após {1} segundos</value>
+    <value>Tentativa {0} de reenvio após {1} segundos.</value>
   </data>
   <data name="Unauthorized" xml:space="preserve">
-    <value>Não autorizado</value>
+    <value>Não Autenticado.</value>
   </data>
 </root>

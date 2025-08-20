@@ -61,7 +61,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker half-open.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker half-open..
         /// </summary>
         public static string CircuitBreakerHalfOpen {
             get {
@@ -70,7 +70,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker opened for {0} seconds.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker opened for {0} seconds..
         /// </summary>
         public static string CircuitBreakerOpenedForSeconds {
             get {
@@ -88,7 +88,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker reset.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker reset..
         /// </summary>
         public static string CircuitBreakerReset {
             get {
@@ -97,7 +97,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Deserialization error.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Deserialization error..
         /// </summary>
         public static string DeserializationError {
             get {
@@ -106,7 +106,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Forbidden.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Forbidden..
         /// </summary>
         public static string Forbidden {
             get {
@@ -115,7 +115,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
         /// </summary>
         public static string NotFound {
             get {
@@ -124,7 +124,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Request error.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Request error..
         /// </summary>
         public static string RequestError {
             get {
@@ -133,7 +133,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Retry attempt {0} after {1} sec.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Retry attempt {0} after {1} sec..
         /// </summary>
         public static string RetryAttemptMessage {
             get {
@@ -142,7 +142,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Unauthorized.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Unauthorized..
         /// </summary>
         public static string Unauthorized {
             get {

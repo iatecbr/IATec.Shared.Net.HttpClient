@@ -118,33 +118,33 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CircuitBreakerHalfOpen" xml:space="preserve">
-    <value>Circuit breaker half-open</value>
+    <value>Circuit breaker half-open.</value>
   </data>
   <data name="CircuitBreakerOpenedForSeconds" xml:space="preserve">
-    <value>Circuit breaker opened for {0} seconds</value>
+    <value>Circuit breaker opened for {0} seconds.</value>
   </data>
   <data name="CircuitBreakerOpenTryAgainLater" xml:space="preserve">
     <value>Circuit breaker open. Please try again later.</value>
   </data>
   <data name="CircuitBreakerReset" xml:space="preserve">
-    <value>Circuit breaker reset</value>
+    <value>Circuit breaker reset.</value>
   </data>
   <data name="DeserializationError" xml:space="preserve">
-    <value>Deserialization error</value>
+    <value>Deserialization error.</value>
   </data>
   <data name="Forbidden" xml:space="preserve">
-    <value>Forbidden</value>
+    <value>Forbidden.</value>
   </data>
   <data name="NotFound" xml:space="preserve">
-    <value>Not Found</value>
+    <value>Not Found.</value>
   </data>
   <data name="RequestError" xml:space="preserve">
-    <value>Request error</value>
+    <value>Request error.</value>
   </data>
   <data name="RetryAttemptMessage" xml:space="preserve">
-    <value>Retry attempt {0} after {1} sec</value>
+    <value>Retry attempt {0} after {1} sec.</value>
   </data>
   <data name="Unauthorized" xml:space="preserve">
-    <value>Unauthorized</value>
+    <value>Unauthorized.</value>
   </data>
 </root>
