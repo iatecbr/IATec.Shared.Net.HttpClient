@@ -325,7 +325,8 @@ namespace IATec.Shared.HttpClient.Service
             {
                 { System.Net.HttpStatusCode.Unauthorized, localizer.GetString(nameof(Messages.Unauthorized)) },
                 { System.Net.HttpStatusCode.NotFound, localizer.GetString(nameof(Messages.NotFound)) },
-                { System.Net.HttpStatusCode.Forbidden, localizer.GetString(nameof(Messages.Forbidden)) }
+                { System.Net.HttpStatusCode.Forbidden, localizer.GetString(nameof(Messages.Forbidden)) },
+                { System.Net.HttpStatusCode.InternalServerError, localizer.GetString(nameof(Messages.InternalServerError)) }
             };
 
             if (statusCodeMessages.TryGetValue(response.StatusCode, out var localizedMessage))

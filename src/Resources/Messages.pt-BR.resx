@@ -135,6 +135,9 @@
   <data name="Forbidden" xml:space="preserve">
     <value>Não Autorizado.</value>
   </data>
+  <data name="InternalServerError" xml:space="preserve">
+    <value>Erro Interno do Servidor.</value>
+  </data>
   <data name="NotFound" xml:space="preserve">
     <value>Não Encontrado.</value>
   </data>
