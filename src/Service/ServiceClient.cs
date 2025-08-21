@@ -331,7 +331,7 @@ namespace IATec.Shared.HttpClient.Service
 
             if (statusCodeMessages.TryGetValue(response.StatusCode, out var localizedMessage))
             {
-                responseDto.AddError(localizedMessage);
+                responseDto.AddError((int)response.StatusCode,localizedMessage);
                 return;
             }
 
