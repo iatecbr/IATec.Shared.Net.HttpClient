@@ -4,6 +4,7 @@ using Microsoft.Extensions.Localization;
 using Polly.CircuitBreaker;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -87,11 +88,16 @@ namespace IATec.Shared.HttpClient.Service
                     responseDto.SetData(content);
                     responseDto.SetSuccess(true);
                 }
+
+                responseDto.SetSuccess(false);
+
+                var localizedResponseError = GetStatusCodeMessages(_localizer, response.StatusCode);
+
+                if (localizedResponseError != null)
+                    responseDto.AddError((int)response.StatusCode, localizedResponseError);
+
                 else
-                {
-                    responseDto.SetSuccess(false);
                     responseDto.AddError($"{_localizer.GetString(nameof(Messages.RequestError))}: {response.ReasonPhrase}");
-                }
             }
             catch (Exception ex)
             {
@@ -321,23 +327,32 @@ namespace IATec.Shared.HttpClient.Service
                 return;
             }
 
-            var statusCodeMessages = new Dictionary<System.Net.HttpStatusCode, string>
-            {
-                { System.Net.HttpStatusCode.Unauthorized, localizer.GetString(nameof(Messages.Unauthorized)) },
-                { System.Net.HttpStatusCode.NotFound, localizer.GetString(nameof(Messages.NotFound)) },
-                { System.Net.HttpStatusCode.Forbidden, localizer.GetString(nameof(Messages.Forbidden)) },
-                { System.Net.HttpStatusCode.InternalServerError, localizer.GetString(nameof(Messages.InternalServerError)) }
-            };
+            var localizedResponseError = GetStatusCodeMessages(localizer, response.StatusCode);
 
-            if (statusCodeMessages.TryGetValue(response.StatusCode, out var localizedMessage))
+            if (localizedResponseError != null)
             {
-                responseDto.AddError((int)response.StatusCode,localizedMessage);
+                responseDto.AddError((int)response.StatusCode, localizedResponseError);
                 return;
             }
 
             var errorResponseDto = await Deserialize<ErrorResponseDto>(response);
 
             responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
+        }
+
+        private static string? GetStatusCodeMessages(IStringLocalizer<Messages> localizer, HttpStatusCode responseStatusCode)
+        {
+            var statusCodeMessages = new Dictionary<HttpStatusCode, string>
+            {
+                [HttpStatusCode.Unauthorized] = localizer.GetString(nameof(Messages.Unauthorized)),
+                [HttpStatusCode.NotFound] = localizer.GetString(nameof(Messages.NotFound)),
+                [HttpStatusCode.Forbidden] = localizer.GetString(nameof(Messages.Forbidden)),
+                [HttpStatusCode.InternalServerError] = localizer.GetString(nameof(Messages.InternalServerError))
+            };
+
+            return statusCodeMessages.TryGetValue(responseStatusCode, out var localizedMessage)
+            ? localizedMessage
+            : null;
         }
 
         private static async Task<T> Deserialize<T>(HttpResponseMessage response)
