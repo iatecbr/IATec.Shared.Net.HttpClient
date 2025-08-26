@@ -45,7 +45,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -91,7 +91,7 @@ namespace IATec.Shared.HttpClient.Service
 
                 responseDto.SetSuccess(false);
 
-                var localizedResponseError = GetStatusCodeMessages(_localizer, response.StatusCode);
+                var localizedResponseError = GetStatusCodeMessages(response.StatusCode);
 
                 if (localizedResponseError != null)
                     responseDto.AddError((int)response.StatusCode, localizedResponseError);
@@ -130,7 +130,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -166,7 +166,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
             }
             catch (Exception ex)
             {
@@ -199,7 +199,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -235,7 +235,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
             }
             catch (Exception ex)
             {
@@ -268,7 +268,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -304,7 +304,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
             }
             catch (Exception ex)
             {
@@ -315,10 +315,9 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
-        private static async Task HandleResponse(
+        private async Task HandleResponse(
             HttpResponseMessage response,
-            BaseResponseDto responseDto,
-            IStringLocalizer<Messages> localizer
+            BaseResponseDto responseDto            
         )
         {
             if (response.IsSuccessStatusCode)
@@ -327,7 +326,7 @@ namespace IATec.Shared.HttpClient.Service
                 return;
             }
 
-            var localizedResponseError = GetStatusCodeMessages(localizer, response.StatusCode);
+            var localizedResponseError = GetStatusCodeMessages(response.StatusCode);
 
             if (localizedResponseError != null)
             {
@@ -340,14 +339,14 @@ namespace IATec.Shared.HttpClient.Service
             responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
         }
 
-        private static string? GetStatusCodeMessages(IStringLocalizer<Messages> localizer, HttpStatusCode responseStatusCode)
+        private string? GetStatusCodeMessages(HttpStatusCode responseStatusCode)
         {
             var statusCodeMessages = new Dictionary<HttpStatusCode, string>
             {
-                [HttpStatusCode.Unauthorized] = localizer.GetString(nameof(Messages.Unauthorized)),
-                [HttpStatusCode.NotFound] = localizer.GetString(nameof(Messages.NotFound)),
-                [HttpStatusCode.Forbidden] = localizer.GetString(nameof(Messages.Forbidden)),
-                [HttpStatusCode.InternalServerError] = localizer.GetString(nameof(Messages.InternalServerError))
+                [HttpStatusCode.Unauthorized] = _localizer.GetString(nameof(Messages.Unauthorized)),
+                [HttpStatusCode.NotFound] = _localizer.GetString(nameof(Messages.NotFound)),
+                [HttpStatusCode.Forbidden] = _localizer.GetString(nameof(Messages.Forbidden)),
+                [HttpStatusCode.InternalServerError] = _localizer.GetString(nameof(Messages.InternalServerError))
             };
 
             return statusCodeMessages.TryGetValue(responseStatusCode, out var localizedMessage)
