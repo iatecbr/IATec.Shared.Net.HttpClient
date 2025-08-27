@@ -352,9 +352,7 @@ namespace IATec.Shared.HttpClient.Service
                 [HttpStatusCode.InternalServerError] = _localizer.GetString(nameof(Messages.InternalServerError))
             };
 
-            return statusCodeMessages.TryGetValue(responseStatusCode, out var localizedMessage)
-            ? localizedMessage
-            : null;
+            return statusCodeMessages.GetValueOrDefault(responseStatusCode);
         }
 
         private static async Task<T> Deserialize<T>(HttpResponseMessage response)
