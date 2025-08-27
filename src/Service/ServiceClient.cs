@@ -89,9 +89,7 @@ namespace IATec.Shared.HttpClient.Service
                     responseDto.SetSuccess(true);
                 }
 
-                responseDto.SetSuccess(false);
-
-                var localizedResponseError = GetStatusCodeMessages(response.StatusCode);
+                var localizedResponseError = GetStatusCodeMessages(response.StatusCode, responseDto);
 
                 if (localizedResponseError != null)
                     responseDto.AddError((int)response.StatusCode, localizedResponseError);
@@ -326,7 +324,7 @@ namespace IATec.Shared.HttpClient.Service
                 return;
             }
 
-            var localizedResponseError = GetStatusCodeMessages(response.StatusCode);
+            var localizedResponseError = GetStatusCodeMessages(response.StatusCode, responseDto);
 
             if (localizedResponseError != null)
             {
@@ -342,8 +340,9 @@ namespace IATec.Shared.HttpClient.Service
                 responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
         }
 
-        private string? GetStatusCodeMessages(HttpStatusCode responseStatusCode)
+        private string? GetStatusCodeMessages(HttpStatusCode responseStatusCode, BaseResponseDto responseDto)
         {
+            responseDto.SetSuccess(false);
             var statusCodeMessages = new Dictionary<HttpStatusCode, string>
             {
                 [HttpStatusCode.Unauthorized] = _localizer.GetString(nameof(Messages.Unauthorized)),
