@@ -337,7 +337,7 @@ namespace IATec.Shared.HttpClient.Service
             var errorResponseDto = await Deserialize<ErrorResponseDto>(response);
 
             if (errorResponseDto.Messages.Count == 0)
-                responseDto.AddError(400, _localizer.GetString(nameof(Messages.BadRequest)));
+                responseDto.AddError((int)HttpStatusCode.BadRequest, _localizer.GetString(nameof(Messages.BadRequest)));
             else
                 responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
         }
