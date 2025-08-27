@@ -317,7 +317,7 @@ namespace IATec.Shared.HttpClient.Service
 
         private async Task HandleResponse(
             HttpResponseMessage response,
-            BaseResponseDto responseDto            
+            BaseResponseDto responseDto
         )
         {
             if (response.IsSuccessStatusCode)
@@ -336,7 +336,10 @@ namespace IATec.Shared.HttpClient.Service
 
             var errorResponseDto = await Deserialize<ErrorResponseDto>(response);
 
-            responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
+            if (errorResponseDto.Messages.Count == 0)
+                responseDto.AddError(400, _localizer.GetString(nameof(Messages.BadRequest)));
+            else
+                responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
         }
 
         private string? GetStatusCodeMessages(HttpStatusCode responseStatusCode)
