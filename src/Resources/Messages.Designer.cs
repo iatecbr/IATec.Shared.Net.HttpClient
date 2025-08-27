@@ -61,6 +61,15 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Bad Request..
+        /// </summary>
+        public static string BadRequest {
+            get {
+                return ResourceManager.GetString("BadRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker half-open..
         /// </summary>
         public static string CircuitBreakerHalfOpen {

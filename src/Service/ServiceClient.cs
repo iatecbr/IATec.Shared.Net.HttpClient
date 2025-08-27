@@ -4,6 +4,7 @@ using Microsoft.Extensions.Localization;
 using Polly.CircuitBreaker;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -44,7 +45,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -87,11 +88,14 @@ namespace IATec.Shared.HttpClient.Service
                     responseDto.SetData(content);
                     responseDto.SetSuccess(true);
                 }
+
+                var localizedResponseError = GetStatusCodeMessages(response.StatusCode, responseDto);
+
+                if (localizedResponseError != null)
+                    responseDto.AddError((int)response.StatusCode, localizedResponseError);
+
                 else
-                {
-                    responseDto.SetSuccess(false);
                     responseDto.AddError($"{_localizer.GetString(nameof(Messages.RequestError))}: {response.ReasonPhrase}");
-                }
             }
             catch (Exception ex)
             {
@@ -124,7 +128,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -160,7 +164,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
             }
             catch (Exception ex)
             {
@@ -193,7 +197,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -229,7 +233,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
             }
             catch (Exception ex)
             {
@@ -262,7 +266,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
 
                 if (responseDto.Success)
                     responseDto.SetData(await Deserialize<T>(response));
@@ -298,7 +302,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto, _localizer);
+                await HandleResponse(response, responseDto);
             }
             catch (Exception ex)
             {
@@ -309,10 +313,9 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
-        private static async Task HandleResponse(
+        private async Task HandleResponse(
             HttpResponseMessage response,
-            BaseResponseDto responseDto,
-            IStringLocalizer<Messages> localizer
+            BaseResponseDto responseDto
         )
         {
             if (response.IsSuccessStatusCode)
@@ -321,26 +324,34 @@ namespace IATec.Shared.HttpClient.Service
                 return;
             }
 
-            var statusCodeMessages = new Dictionary<System.Net.HttpStatusCode, string>
-            {
-                { System.Net.HttpStatusCode.Unauthorized, localizer.GetString(nameof(Messages.Unauthorized)) },
-                { System.Net.HttpStatusCode.NotFound, localizer.GetString(nameof(Messages.NotFound)) },
-                { System.Net.HttpStatusCode.Forbidden, localizer.GetString(nameof(Messages.Forbidden)) },
-                {
-                    System.Net.HttpStatusCode.InternalServerError,
-                    localizer.GetString(nameof(Messages.InternalServerError))
-                }
-            };
+            var localizedResponseError = GetStatusCodeMessages(response.StatusCode, responseDto);
 
-            if (statusCodeMessages.TryGetValue(response.StatusCode, out var localizedMessage))
+            if (localizedResponseError != null)
             {
-                responseDto.AddError((int)response.StatusCode, localizedMessage);
+                responseDto.AddError((int)response.StatusCode, localizedResponseError);
                 return;
             }
 
             var errorResponseDto = await Deserialize<ErrorResponseDto>(response);
 
-            responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
+            if (errorResponseDto.Messages.Count == 0)
+                responseDto.AddError((int)HttpStatusCode.BadRequest, _localizer.GetString(nameof(Messages.BadRequest)));
+            else
+                responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
+        }
+
+        private string? GetStatusCodeMessages(HttpStatusCode responseStatusCode, BaseResponseDto responseDto)
+        {
+            responseDto.SetSuccess(false);
+            var statusCodeMessages = new Dictionary<HttpStatusCode, string>
+            {
+                [HttpStatusCode.Unauthorized] = _localizer.GetString(nameof(Messages.Unauthorized)),
+                [HttpStatusCode.NotFound] = _localizer.GetString(nameof(Messages.NotFound)),
+                [HttpStatusCode.Forbidden] = _localizer.GetString(nameof(Messages.Forbidden)),
+                [HttpStatusCode.InternalServerError] = _localizer.GetString(nameof(Messages.InternalServerError))
+            };
+
+            return statusCodeMessages.GetValueOrDefault(responseStatusCode);
         }
 
         private static async Task<T> Deserialize<T>(HttpResponseMessage response)
