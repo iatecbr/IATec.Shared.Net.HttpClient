@@ -11,15 +11,17 @@ using System.Threading.Tasks;
 
 namespace IATec.Shared.HttpClient.Service
 {
-    public class ServiceClient : IServiceClient
+    public class ServiceClient<TError> : IServiceClient
     {
         private readonly System.Net.Http.HttpClient _httpClient;
         private readonly IStringLocalizer<Messages> _localizer;
+        private readonly Type _errorType;
 
         public ServiceClient(System.Net.Http.HttpClient httpClient, IStringLocalizer<Messages> localizer)
         {
             _httpClient = httpClient;
             _localizer = localizer;
+            _errorType = typeof(TError) == typeof(object) ? typeof(ErrorResponseDto) : typeof(TError);
         }
 
         public async Task<ResponseDto<T>> GetAsync<T>(string url) where T : class
@@ -313,10 +315,7 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
-        private async Task HandleResponse(
-            HttpResponseMessage response,
-            BaseResponseDto responseDto
-        )
+        private async Task HandleResponse(HttpResponseMessage response, BaseResponseDto responseDto)
         {
             if (response.IsSuccessStatusCode)
             {
@@ -332,12 +331,26 @@ namespace IATec.Shared.HttpClient.Service
                 return;
             }
 
-            var errorResponseDto = await Deserialize<ErrorResponseDto>(response);
+            var errorResponse = await DeserializeError(response);
 
-            if (errorResponseDto.Messages.Count == 0)
-                responseDto.AddError((int)HttpStatusCode.BadRequest, _localizer.GetString(nameof(Messages.BadRequest)));
+
+            if (errorResponse != null)
+            {
+                if (_errorType == typeof(ErrorResponseDto))
+                {
+                    var errorResponseDto = errorResponse as ErrorResponseDto;
+
+                    if (errorResponseDto?.Messages?.Count > 0)
+                        responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
+
+                    else
+                        responseDto.AddError((int)HttpStatusCode.BadRequest, _localizer.GetString(nameof(Messages.BadRequest)));
+                }
+                else
+                    responseDto.AddError((int)response.StatusCode, $"{JsonSerializer.Serialize(errorResponse)}");
+            }
             else
-                responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
+                responseDto.AddError((int)HttpStatusCode.BadRequest, _localizer.GetString(nameof(Messages.BadRequest)));
         }
 
         private string? GetStatusCodeMessages(HttpStatusCode responseStatusCode, BaseResponseDto responseDto)
@@ -363,6 +376,24 @@ namespace IATec.Shared.HttpClient.Service
 
             var responseData = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<T>(responseData, options)!;
+        }
+
+        private async Task<object?> DeserializeError(HttpResponseMessage response)
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var responseData = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize(responseData, _errorType, options);
+        }
+    }
+    public class ServiceClient : ServiceClient<ErrorResponseDto>
+    {
+        public ServiceClient(System.Net.Http.HttpClient httpClient, IStringLocalizer<Messages> localizer)
+            : base(httpClient, localizer)
+        {
         }
     }
 }
