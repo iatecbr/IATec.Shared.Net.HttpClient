@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 
 namespace IATec.Shared.HttpClient.Service
 {
+
     public interface IServiceClient
     {
 
         Task<ResponseDto<T>> GetAsync<T>(string url) where T : class;
-        Task<ResponseDto<T>> GetAsync<T>(string url, Type? error) where T : class;
+        Task<ResponseDto<T>> GetAsync<T,TError>(string url) where T : class;
 
         Task<ResponseDto<string>> GetStringAsync(string url);
         Task<ResponseDto<string>> GetStringAsync(string url, Type? error);

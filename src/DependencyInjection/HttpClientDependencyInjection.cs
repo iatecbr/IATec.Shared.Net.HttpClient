@@ -1,4 +1,5 @@
 ﻿using IATec.Shared.HttpClient.Configurations;
+using IATec.Shared.HttpClient.Dto;
 using IATec.Shared.HttpClient.Extensions;
 using IATec.Shared.HttpClient.Resources;
 using IATec.Shared.HttpClient.Service;
@@ -21,7 +22,6 @@ namespace IATec.Shared.HttpClient.DependencyInjection
                 services.AddLocalization(options => options.ResourcesPath = "");
 
             var config = new HttpClientPolicyConfiguration();
-
             configurePolicy.Invoke(config);
 
             services.AddSingleton<IAsyncPolicy<HttpResponseMessage>>(serviceProvider =>
