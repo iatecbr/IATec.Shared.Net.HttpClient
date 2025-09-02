@@ -36,7 +36,7 @@ namespace IATec.Shared.HttpClient.DependencyInjection
 
             return services;
         }
-
+        
         private static IAsyncPolicy<HttpResponseMessage> GetCombinedPolicy(
             HttpClientPolicyConfiguration config, IStringLocalizer<Messages> localizer)
         {

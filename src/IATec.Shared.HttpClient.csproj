@@ -17,6 +17,7 @@
 		<RepositoryType>Git</RepositoryType>
 		<PackageTags>net</PackageTags>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<LangVersion>Latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
