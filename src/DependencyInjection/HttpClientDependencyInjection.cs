@@ -1,5 +1,4 @@
 ﻿using IATec.Shared.HttpClient.Configurations;
-using IATec.Shared.HttpClient.Dto;
 using IATec.Shared.HttpClient.Extensions;
 using IATec.Shared.HttpClient.Resources;
 using IATec.Shared.HttpClient.Service;
@@ -36,7 +35,7 @@ namespace IATec.Shared.HttpClient.DependencyInjection
 
             return services;
         }
-        
+
         private static IAsyncPolicy<HttpResponseMessage> GetCombinedPolicy(
             HttpClientPolicyConfiguration config, IStringLocalizer<Messages> localizer)
         {

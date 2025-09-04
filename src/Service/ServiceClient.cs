@@ -22,14 +22,14 @@ public class ServiceClient : IServiceClient
         _localizer = localizer;            
     }
 
-    public async Task<ResponseDto<T>> GetAsync<T>(string url) where T : class
+    public async Task<ResponseDto<T, ErrorResponseDto>> GetAsync<T>(string url) where T : class
     {
-        return await GetAsync<T,ErrorResponseDto>(url);
+        return await GetAsync<T, ErrorResponseDto>(url);
     }
 
-    public async Task<ResponseDto<T>> GetAsync<T,TError>(string url) where T : class
+    public async Task<ResponseDto<T, TError>> GetAsync<T, TError>(string url) where T : class
     {
-        var responseDto = new ResponseDto<T>();
+        var responseDto = new ResponseDto<T, TError>();
 
         HttpResponseMessage response;
 
@@ -50,10 +50,7 @@ public class ServiceClient : IServiceClient
 
         try
         {
-            await HandleResponse<T,TError>(response, responseDto);
-
-            if (responseDto.Success)
-                responseDto.SetData(await Deserialize<T>(response));
+            await HandleResponse<T, TError>(response, responseDto);
         }
         catch (Exception ex)
         {
@@ -64,14 +61,14 @@ public class ServiceClient : IServiceClient
         return responseDto;
     }
 
-    public async Task<ResponseDto<string>> GetStringAsync(string url)
+    public async Task<ResponseDto<string, ErrorResponseDto>> GetStringAsync(string url)
     {
         return await GetStringAsync<ErrorResponseDto>(url);
     }
 
-    public async Task<ResponseDto<string>> GetStringAsync<TError>(string url)
+    public async Task<ResponseDto<string, TError>> GetStringAsync<TError>(string url)
     {
-        var responseDto = new ResponseDto<string>();
+        var responseDto = new ResponseDto<string, TError>();
 
         HttpResponseMessage response;
 
@@ -121,17 +118,16 @@ public class ServiceClient : IServiceClient
         return await PostAsync<BaseResponseDto, ErrorResponseDto>(url, content);
     }
 
-    public record nullDto;
 
-    public async Task<ResponseDto<T>> PostAsync<T>(string url, HttpContent content) where T : class
+    public async Task<ResponseDto<T, ErrorResponseDto>> PostAsync<T>(string url, HttpContent content) where T : class
     {
-        if (typeof(T) == typeof(nullDto));
-            return await PostAsync<nullDto,T>(url, content);
+        return await PostAsync<T, ErrorResponseDto>(url, content);
     }
 
-    public async Task<ResponseDto<T?>> PostAsync<T, TError>(string url, HttpContent content) where T : class where TError : class
+    public async Task<ResponseDto<T, TError>> PostAsync<T, TError>(string url, HttpContent content) where T : class where TError : class
     {
-        var responseDto = new ResponseDto<T>();
+        var responseDto = new ResponseDto<T, TError>();
+
         HttpResponseMessage response;
 
         try
@@ -151,11 +147,9 @@ public class ServiceClient : IServiceClient
 
         try
         {
-            await HandleResponse<T,TError>(response, responseDto);
-
-            if (responseDto.Success)
-                responseDto.SetData(await Deserialize<T>(response));
+            await HandleResponse(response, responseDto);
         }
+
         catch (Exception ex)
         {
             responseDto.AddError($"{_localizer.GetString(nameof(Messages.DeserializationError))}: {ex.Message}");
@@ -170,14 +164,15 @@ public class ServiceClient : IServiceClient
         return await PutAsync<BaseResponseDto, ErrorResponseDto>(url, content);
     }
 
-    public async Task<ResponseDto<T>> PutAsync<T>(string url, HttpContent content) where T : class
+    public async Task<ResponseDto<T, ErrorResponseDto>> PutAsync<T>(string url, HttpContent content) where T : class
     {        
         return await PutAsync<T, ErrorResponseDto>(url, content);
     }
 
-    public async Task<ResponseDto<T>> PutAsync<T, TError>(string url, HttpContent content) where T : class
+    public async Task<ResponseDto<T, TError>> PutAsync<T, TError>(string url, HttpContent content) where T : class where TError : class
     {
-        var responseDto = new ResponseDto<T>();
+        var responseDto = new ResponseDto<T, TError>();
+
         HttpResponseMessage response;
 
         try
@@ -197,10 +192,7 @@ public class ServiceClient : IServiceClient
 
         try
         {
-            await HandleResponse<T,TError>(response, responseDto);
-
-            if (responseDto.Success)
-                responseDto.SetData(await Deserialize<T>(response));
+            await HandleResponse(response, responseDto);
         }
         catch (Exception ex)
         {
@@ -216,15 +208,15 @@ public class ServiceClient : IServiceClient
         return await DeleteAsync<BaseResponseDto, ErrorResponseDto>(url);
     }
 
-    public async Task<ResponseDto<T>> DeleteAsync<T>(string url) where T : class
+    public async Task<ResponseDto<T, ErrorResponseDto>> DeleteAsync<T>(string url) where T : class
     {                
-        var http = _httpClient.PostAsync(url, null);
         return await DeleteAsync<T, ErrorResponseDto>(url);        
     }    
 
-    public async Task<ResponseDto<T>> DeleteAsync<T, TError>(string url) where T : class
+    public async Task<ResponseDto<T, TError>> DeleteAsync<T, TError>(string url) where T : class where TError : class
     {
-        var responseDto = new ResponseDto<T>();
+        var responseDto = new ResponseDto<T, TError>();
+
         HttpResponseMessage response;
 
         try
@@ -244,7 +236,7 @@ public class ServiceClient : IServiceClient
 
         try
         {
-            await HandleResponse<T,TError>(response, responseDto);            
+            await HandleResponse(response, responseDto);
         }
         catch (Exception ex)
         {
@@ -255,17 +247,19 @@ public class ServiceClient : IServiceClient
         return responseDto;
     }
 
-    private async Task HandleResponse<T, TError>(HttpResponseMessage response, ResponseDto<T> responseDto)
+    private async Task HandleResponse<T, TError>(HttpResponseMessage response, ResponseDto<T, TError> responseDto)
     {
         if (response.IsSuccessStatusCode)
         {            
             responseDto.SetSuccess(true);
-
             responseDto.SetData(await Deserialize<T>(response));
             return;
         }
 
         var localizedResponseError = GetStatusCodeMessages(response.StatusCode, responseDto);
+
+
+        responseDto.SetSuccess(false);
 
         if (localizedResponseError != null)
         {
@@ -273,19 +267,38 @@ public class ServiceClient : IServiceClient
             return;
         }
 
-        var errorResponse = await Deserialize<TError>(response);
+        TError? errorResponse = default;
+        T? errorResponseFallback = default;
+        bool errorHandled;
 
+        try
+        {
+            errorResponse = await Deserialize<TError>(response);
+
+            errorHandled = true;
+        }
+        catch (JsonException)
+        {
+            errorResponseFallback = await Deserialize<T>(response);
+            errorHandled = false;
+        }
+
+        if (errorHandled)
+        {
         if (typeof(TError) == typeof(ErrorResponseDto))
         {
             var errorResponseDto = errorResponse as ErrorResponseDto;
-            if (errorResponseDto?.Messages.Count > 0)
+                if (errorResponseDto?.Messages?.Count > 0)
                 responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
-
             else                
                 responseDto.AddError((int)HttpStatusCode.BadRequest, _localizer.GetString(nameof(Messages.BadRequest)));
         }
         else
-            responseDto.AddError((int)response.StatusCode, $"{JsonSerializer.Serialize(errorResponse)}");
+                responseDto.SetError(errorResponse!);
+
+        }
+        else
+            responseDto.SetData(errorResponseFallback!);        
     }
 
     private string? GetStatusCodeMessages(HttpStatusCode responseStatusCode, BaseResponseDto responseDto)
@@ -302,7 +315,7 @@ public class ServiceClient : IServiceClient
         return statusCodeMessages.GetValueOrDefault(responseStatusCode);
     }
 
-    private static async Task<T?> Deserialize<T>(HttpResponseMessage response)
+    private static async Task<T> Deserialize<T>(HttpResponseMessage response)
     {
         var options = new JsonSerializerOptions
         {
@@ -310,19 +323,16 @@ public class ServiceClient : IServiceClient
         };
 
         var responseData = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<T>(responseData, options);
 
-        return JsonSerializer.Deserialize<T>(responseData, options)!;
+        if (typeof(T) == typeof(ErrorResponseDto))
+        {
+            if (result is not ErrorResponseDto errorDto || errorDto.Messages == null || errorDto.Messages.Count == 0)
+                throw new JsonException($"Não foi possível desserializar para {typeof(T).Name} com dados relevantes. Conteúdo: {responseData}");
     }
+        else if (result == null)        
+            throw new JsonException($"Não foi possível desserializar o conteúdo para o tipo {typeof(T).Name}. Conteúdo: {responseData}");
 
-    //private async Task<object?> DeserializeError<TError>(HttpResponseMessage response)
-    //{
-    //    var options = new JsonSerializerOptions
-    //    {
-    //        PropertyNameCaseInsensitive = true
-    //    };
-
-    //    var responseData = await response.Content.ReadAsStringAsync();
-        
-    //    return JsonSerializer.Deserialize<TError>(responseData, options);            
-    //}
+        return result;
+    }
 }

@@ -1,12 +1,19 @@
 ﻿namespace IATec.Shared.HttpClient.Dto
 {
-    public class ResponseDto<T> : BaseResponseDto
+    public class ResponseDto<T, TError> : BaseResponseDto
     {
-        public T Data { get; private set; } 
+        public T? Data { get; private set; }
+
+        public TError? Error { get; private set; }
 
         internal void SetData(T data)
         {
             Data = data;
+        }
+
+        internal void SetError(TError error)
+        {
+            Error = error;
         }
     }
 }

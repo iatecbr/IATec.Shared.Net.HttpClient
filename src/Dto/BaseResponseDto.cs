@@ -7,7 +7,7 @@ namespace IATec.Shared.HttpClient.Dto
     {
         //Quando o cliente envia o response e o error, os dois deveriam voltar na classe responseDto.Data
         public bool Success { get; private set; }
-        private readonly List<ErrorDto> _errors = new List<ErrorDto>();
+        private readonly List<ErrorDto> _errors = [];
         public IReadOnlyList<ErrorDto> Errors => _errors.AsReadOnly();
 
         internal void AddError(string message)
