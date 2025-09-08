@@ -157,6 +157,7 @@ public class ServiceClient : IServiceClient
         }
 
         return responseDto;
+
     }
 
     public async Task<BaseResponseDto> PutAsync(string url, HttpContent content)
@@ -249,28 +250,25 @@ public class ServiceClient : IServiceClient
 
     private async Task HandleResponse<T, TError>(HttpResponseMessage response, ResponseDto<T, TError> responseDto)
     {
+        var baseDeserialize = await Deserialize<T>(response);
+
+        bool isError = false;
+
+        var errorProp = baseDeserialize!.GetType().GetProperty("Error");
+
+        isError = (bool)errorProp.GetValue(baseDeserialize);
+        
+
         if (response.IsSuccessStatusCode)
         {
+            if (!isError)
+            {
+                responseDto.SetSuccess(true);
+
+                responseDto.SetData(await Deserialize<T>(response));
+            }
+
             responseDto.SetSuccess(true);
-
-            var responseBaseDto = await DeserializeSuccess(response);
-
-            if (responseBaseDto != null)
-            {
-                responseDto.SetBaseData(responseBaseDto);
-                return;
-            }
-            else
-            {
-                try
-                {
-                    responseDto.SetData(await Deserialize<T>(response));
-                }
-                catch (JsonException)
-                {
-                    return;
-                }
-            }
 
             return;
         }
@@ -297,8 +295,17 @@ public class ServiceClient : IServiceClient
         }
         catch (JsonException)
         {
-            errorResponseFallback = await Deserialize<T>(response);
-            errorHandled = false;
+            try
+            {
+                errorResponseFallback = await Deserialize<T>(response);
+                errorHandled = false;
+            }
+
+            catch (JsonException ex)
+            {
+                throw new JsonException($"Não foi possível desserializar para {typeof(T).Name} com dados relevantes. Conteúdo: {ex.Data}");
+            }
+
         }
 
         if (errorHandled)
@@ -333,7 +340,7 @@ public class ServiceClient : IServiceClient
         return statusCodeMessages.GetValueOrDefault(responseStatusCode);
     }
 
-    private static async Task<T?> Deserialize<T>(HttpResponseMessage response)
+    private static async Task<T> Deserialize<T>(HttpResponseMessage response)
     {
         var options = new JsonSerializerOptions
         {
@@ -346,36 +353,11 @@ public class ServiceClient : IServiceClient
 
         if (typeof(T) == typeof(ErrorResponseDto))
         {
-            if (result is not ErrorResponseDto errorDto || errorDto.Messages == null || errorDto.Messages.Count == 0)
+            var errorDto = result as ErrorResponseDto;
+            if (errorDto == null || errorDto.Messages == null || errorDto.Messages.Count == 0)
                 throw new JsonException($"Não foi possível desserializar para {typeof(T).Name} com dados relevantes. Conteúdo: {responseData}");
         }
-
-        if (typeof(T) == typeof(BaseResponseDto))
-        {
-            if (result is not BaseResponseDto baseResponseDto || baseResponseDto.Success == false)
-                throw new JsonException($"Não foi possível desserializar para {typeof(T).Name} com dados relevantes. Conteúdo: {responseData}");
-        }
-
-        else if (result == null)
-            throw new JsonException($"Não foi possível desserializar o conteúdo para o tipo {typeof(T).Name}. Conteúdo: {responseData}");
 
         return result;
-    }
-
-    public async Task<BaseResponseDto> DeserializeSuccess(HttpResponseMessage response)
-    {
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        var responseData = await response.Content.ReadAsStringAsync();
-
-        var result = JsonSerializer.Deserialize<BaseResponseDto>(responseData, options);
-
-        if (result is BaseResponseDto successDto && successDto.Success)
-            return result;
-
-        return null;
     }
 }
