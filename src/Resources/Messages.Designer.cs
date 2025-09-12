@@ -160,6 +160,15 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Request timed out.
+        /// </summary>
+        public static string TimeoutMessage {
+            get {
+                return ResourceManager.GetString("TimeoutMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Unauthorized..
         /// </summary>
         public static string Unauthorized {

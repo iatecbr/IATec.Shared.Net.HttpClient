@@ -150,6 +150,9 @@
   <data name="RetryAttemptMessage" xml:space="preserve">
     <value>Reintento {0} después de {1} segundos.</value>
   </data>
+  <data name="TimeoutMessage" xml:space="preserve">
+    <value>Se agotó el tiempo de la solicitud</value>
+  </data>
   <data name="Unauthorized" xml:space="preserve">
     <value>No autenticado.</value>
   </data>

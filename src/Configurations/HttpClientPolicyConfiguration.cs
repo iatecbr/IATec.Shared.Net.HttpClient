@@ -43,5 +43,10 @@ namespace IATec.Shared.HttpClient.Configurations
         /// Default value: 30 seconds.
         /// </summary>
         public TimeSpan CircuitBreakerDuration { get; set; } = TimeSpan.FromSeconds(30);
+
+        /// <summary>
+        /// Gets or sets the timeout for a request.
+        /// </summary>
+        public TimeSpan? RequestTimeout { get; set; } = null;
     }
 }

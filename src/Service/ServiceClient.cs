@@ -1,4 +1,5 @@
 ﻿using IATec.Shared.HttpClient.Dto;
+using IATec.Shared.HttpClient.Extensions;
 using IATec.Shared.HttpClient.Resources;
 using Microsoft.Extensions.Localization;
 using Polly.CircuitBreaker;
@@ -356,13 +357,8 @@ namespace IATec.Shared.HttpClient.Service
 
         private static async Task<T> Deserialize<T>(HttpResponseMessage response)
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
             var responseData = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<T>(responseData, options)!;
+            return JsonSerializer.Deserialize<T>(responseData, SerializerExtensions.SerializerOptions)!;
         }
     }
 }
