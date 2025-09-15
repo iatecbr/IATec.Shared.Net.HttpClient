@@ -1,12 +1,12 @@
 ﻿using IATec.Shared.HttpClient.Configurations;
 using IATec.Shared.HttpClient.Extensions;
+using IATec.Shared.HttpClient.Helpers;
 using IATec.Shared.HttpClient.Resources;
 using IATec.Shared.HttpClient.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
 using Polly;
-using Polly.Registry;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -15,49 +15,25 @@ namespace IATec.Shared.HttpClient.DependencyInjection
 {
     public static class HttpClientDependencyInjection
     {
-        const string PolicyKeyPrefix = "iatec:httpclient:";
-        const string DefaultClientName = "DefaultHttpClient";
-
         public static IServiceCollection AddHttpClientService(
             this IServiceCollection services,
             Action<HttpClientPolicyConfiguration> configurePolicy,
             Action<System.Net.Http.HttpClient>? configureClient = null,
-            string clientName = DefaultClientName)
+            string clientName = Constants.DefaultHttpClientName)
         {
             if (services.All(sd => sd.ServiceType != typeof(IStringLocalizerFactory)))
                 services.AddLocalization(options => options.ResourcesPath = "");
-
-            IPolicyRegistry<string> registry = services.AddPolicyRegistry();
-
-            var config = new HttpClientPolicyConfiguration();
-            configurePolicy?.Invoke(config);
 
             using (var serviceProvider = services.BuildServiceProvider())
             {
                 var localizer = serviceProvider.GetRequiredService<IStringLocalizer<Messages>>();
 
+                var config = new HttpClientPolicyConfiguration();
+                configurePolicy.Invoke(config);
                 var combinedPolicy = GetCombinedPolicy(config, localizer);
 
-                string policyKey = $"{PolicyKeyPrefix}:{clientName}";
-
-                if (registry.ContainsKey(policyKey))
-                    registry[policyKey] = combinedPolicy;
-                else
-                    registry.Add(policyKey, combinedPolicy);
-
-                var builder = services.AddHttpClient(clientName, configureClient ?? (_ => { }));
-                builder.AddPolicyHandlerFromRegistry(policyKey);
-
-                bool isLegacy = (configureClient is null) && string.Equals(clientName, DefaultClientName, StringComparison.Ordinal);
-
-                if (isLegacy)
-                {
-                    services.TryAddTransient<IServiceClient>(serviceProvider =>
-                    {
-                        var http = serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient(clientName);
-                        return new ServiceClient(http, localizer);
-                    });
-                }
+                services.AddHttpClient(clientName, configureClient ?? (_ => { }))
+                    .AddPolicyHandler(combinedPolicy);
             }
 
             services.TryAddSingleton<IServiceClientFactory, ServiceClientFactory>();

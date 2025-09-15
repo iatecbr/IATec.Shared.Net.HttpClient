@@ -94,7 +94,6 @@ namespace IATec.Shared.HttpClient.Service
 
                 if (localizedResponseError != null)
                     responseDto.AddError((int)response.StatusCode, localizedResponseError);
-
                 else
                     responseDto.AddError($"{_localizer.GetString(nameof(Messages.RequestError))}: {response.ReasonPhrase}");
             }
