@@ -4,7 +4,7 @@ using System.Net.Http;
 
 namespace IATec.Shared.HttpClient.Service
 {
-    internal class ServiceClientFactory : IServiceClientFactory
+    public class ServiceClientFactory : IServiceClientFactory
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IStringLocalizer<Messages> _localizer;

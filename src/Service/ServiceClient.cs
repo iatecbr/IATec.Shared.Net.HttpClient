@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace IATec.Shared.HttpClient.Service
 {
-    public class ServiceClient : IServiceClient
+    internal class ServiceClient : IServiceClient
     {
         private readonly System.Net.Http.HttpClient _httpClient;
         private readonly IStringLocalizer<Messages> _localizer;
