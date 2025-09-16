@@ -17,6 +17,6 @@ namespace IATec.Shared.HttpClient.Extensions
             };
             options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             return options;
-        } 
+        }
     }
 }

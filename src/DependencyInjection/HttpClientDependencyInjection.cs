@@ -15,6 +15,50 @@ namespace IATec.Shared.HttpClient.DependencyInjection
 {
     public static class HttpClientDependencyInjection
     {
+        /// <summary>
+        /// Adds the HttpClient service with configurable resiliency policies (Retry, Circuit Breaker, Timeout).
+        /// <para>
+        /// <b>Parameters:</b>
+        /// <list type="bullet">
+        ///   <item>
+        ///     <description><paramref name="configurePolicy"/>: Delegate to configure resiliency policies via <see cref="HttpClientPolicyConfiguration"/>.</description>
+        ///   </item>
+        ///   <item>
+        ///     <description><paramref name="configureClient"/>: Optional delegate to configure the <see cref="System.Net.Http.HttpClient"/>.</description>
+        ///   </item>
+        ///   <item>
+        ///     <description><paramref name="clientName"/>: Http client name. Default: <see cref="Constants.DefaultHttpClientName"/>.</description>
+        ///   </item>
+        /// </list>
+        /// </para>
+        /// <para>
+        /// <b>Configuration (<see cref="HttpClientPolicyConfiguration"/>):</b>
+        /// <list type="bullet">
+        ///   <item>
+        ///     <description><c>UseRetry</c>: Enables retry policy.</description>
+        ///   </item>
+        ///   <item>
+        ///     <description><c>RetryCount</c>: Number of retry attempts.</description>
+        ///   </item>
+        ///   <item>
+        ///     <description><c>RetryDelay</c>: Delay between retry attempts.</description>
+        ///   </item>
+        ///   <item>
+        ///     <description><c>UseCircuitBreaker</c>: Enables circuit breaker policy.</description>
+        ///   </item>
+        ///   <item>
+        ///     <description><c>CircuitBreakerFailuresAllowedBeforeBreaking</c>: Failures allowed before opening the circuit.</description>
+        ///   </item>
+        ///   <item>
+        ///     <description><c>CircuitBreakerDuration</c>: Duration the circuit remains open.</description>
+        ///   </item>
+        ///   <item>
+        ///     <description><c>RequestTimeout</c>: Request timeout (optional).</description>
+        ///   </item>
+        /// </list>
+        /// </para>
+        /// </summary>
+
         public static IServiceCollection AddHttpClientService(
             this IServiceCollection services,
             Action<HttpClientPolicyConfiguration> configurePolicy,
