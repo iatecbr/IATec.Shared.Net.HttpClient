@@ -24,7 +24,7 @@ namespace IATec.Shared.HttpClient.DependencyInjection
         ///     <description><paramref name="configurePolicy"/>: Delegate to configure resiliency policies via <see cref="HttpClientPolicyConfiguration"/>.</description>
         ///   </item>
         ///   <item>
-        ///     <description><paramref name="configureClient"/>: Optional delegate to configure the <see cref="System.Net.Http.HttpClient"/>.</description>
+        ///     <description><paramref name="configureClient"/>: Optional delegate to configure the <see cref="System.Net.Http.HttpClient"/> properties as BaseAddress, headers, handlers.</description>
         ///   </item>
         ///   <item>
         ///     <description><paramref name="clientName"/>: Http client name. Default: <see cref="Constants.DefaultHttpClientName"/>.</description>
