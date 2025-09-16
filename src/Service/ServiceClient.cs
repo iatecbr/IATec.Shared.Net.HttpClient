@@ -1,4 +1,5 @@
 ﻿using IATec.Shared.HttpClient.Dto;
+using IATec.Shared.HttpClient.Extensions;
 using IATec.Shared.HttpClient.Resources;
 using Microsoft.Extensions.Localization;
 using Polly.CircuitBreaker;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace IATec.Shared.HttpClient.Service
 {
-    public class ServiceClient : IServiceClient
+    internal class ServiceClient : IServiceClient
     {
         private readonly System.Net.Http.HttpClient _httpClient;
         private readonly IStringLocalizer<Messages> _localizer;
@@ -93,7 +94,6 @@ namespace IATec.Shared.HttpClient.Service
 
                 if (localizedResponseError != null)
                     responseDto.AddError((int)response.StatusCode, localizedResponseError);
-
                 else
                     responseDto.AddError($"{_localizer.GetString(nameof(Messages.RequestError))}: {response.ReasonPhrase}");
             }
@@ -356,13 +356,8 @@ namespace IATec.Shared.HttpClient.Service
 
         private static async Task<T> Deserialize<T>(HttpResponseMessage response)
         {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
             var responseData = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<T>(responseData, options)!;
+            return JsonSerializer.Deserialize<T>(responseData, SerializerExtensions.SerializerOptions)!;
         }
     }
 }

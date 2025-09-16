@@ -4,7 +4,7 @@ namespace IATec.Shared.HttpClient.Configurations
 {
     /// <summary>
     /// Represents the configuration settings for HttpClient policies, including Retry and Circuit Breaker.
-    /// TooManyRequest status code is handled by default on Circuit Breaker. 
+    /// TooManyRequest status code is handled by default on Circuit Breaker.
     /// </summary>
     public class HttpClientPolicyConfiguration
     {
@@ -43,5 +43,10 @@ namespace IATec.Shared.HttpClient.Configurations
         /// Default value: 30 seconds.
         /// </summary>
         public TimeSpan CircuitBreakerDuration { get; set; } = TimeSpan.FromSeconds(30);
+
+        /// <summary>
+        /// Gets or sets the timeout for a request.
+        /// </summary>
+        public TimeSpan? RequestTimeout { get; set; } = null;
     }
 }
