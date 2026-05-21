@@ -13,6 +13,9 @@ using System.Net.Http;
 
 namespace IATec.Shared.HttpClient.DependencyInjection
 {
+    /// <summary>
+    /// Provides extension methods for registering the HTTP client service with Polly resiliency policies.
+    /// </summary>
     public static class HttpClientDependencyInjection
     {
         /// <summary>
@@ -85,6 +88,12 @@ namespace IATec.Shared.HttpClient.DependencyInjection
             return services;
         }
 
+        /// <summary>
+        /// Builds the combined Polly retry, circuit breaker, and timeout policy based on configuration.
+        /// </summary>
+        /// <param name="config">The resiliency policy configuration.</param>
+        /// <param name="localizer">The string localizer for messages.</param>
+        /// <returns>The combined asynchronous policy for <see cref="HttpResponseMessage"/>.</returns>
         private static IAsyncPolicy<HttpResponseMessage> GetCombinedPolicy(
             HttpClientPolicyConfiguration config, IStringLocalizer<Messages> localizer)
         {

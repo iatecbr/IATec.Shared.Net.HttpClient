@@ -13,7 +13,7 @@ namespace IATec.Shared.HttpClient.Resources {
     
     
     /// <summary>
-    ///   Uma classe de recurso de tipo de alta segurança, para pesquisar cadeias de caracteres localizadas etc.
+    ///   A strongly-typed resource class for looking up localized strings.
     /// </summary>
     // Essa classe foi gerada automaticamente pela classe StronglyTypedResourceBuilder
     // através de uma ferramenta como ResGen ou Visual Studio.
@@ -33,7 +33,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
+        ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         public static global::System.Resources.ResourceManager ResourceManager {
@@ -47,8 +47,8 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Substitui a propriedade CurrentUICulture do thread atual para todas as
-        ///   pesquisas de recursos que usam essa classe de recurso de tipo de alta segurança.
+        ///   Overrides the current thread's CurrentUICulture property for all
+        ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         public static global::System.Globalization.CultureInfo Culture {
@@ -61,7 +61,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Bad Request..
+        ///   Looks up a localized string similar to "Bad Request.".
         /// </summary>
         public static string BadRequest {
             get {
@@ -70,7 +70,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker half-open..
+        ///   Looks up a localized string similar to "Circuit breaker half-open.".
         /// </summary>
         public static string CircuitBreakerHalfOpen {
             get {
@@ -79,7 +79,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker opened for {0} seconds..
+        ///   Looks up a localized string similar to "Circuit breaker opened for {0} seconds.".
         /// </summary>
         public static string CircuitBreakerOpenedForSeconds {
             get {
@@ -88,7 +88,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker open. Please try again later..
+        ///   Looks up a localized string similar to "Circuit breaker open. Please try again later.".
         /// </summary>
         public static string CircuitBreakerOpenTryAgainLater {
             get {
@@ -97,7 +97,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Circuit breaker reset..
+        ///   Looks up a localized string similar to "Circuit breaker reset.".
         /// </summary>
         public static string CircuitBreakerReset {
             get {
@@ -106,7 +106,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Deserialization error..
+        ///   Looks up a localized string similar to "Deserialization error.".
         /// </summary>
         public static string DeserializationError {
             get {
@@ -115,7 +115,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Forbidden..
+        ///   Looks up a localized string similar to "Forbidden.".
         /// </summary>
         public static string Forbidden {
             get {
@@ -124,7 +124,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Internal Server Error..
+        ///   Looks up a localized string similar to "Internal Server Error.".
         /// </summary>
         public static string InternalServerError {
             get {
@@ -133,7 +133,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Not Found..
+        ///   Looks up a localized string similar to "Not Found.".
         /// </summary>
         public static string NotFound {
             get {
@@ -142,7 +142,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Request error..
+        ///   Looks up a localized string similar to "Request error.".
         /// </summary>
         public static string RequestError {
             get {
@@ -151,7 +151,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Retry attempt {0} after {1} sec..
+        ///   Looks up a localized string similar to "Retry attempt {0} after {1} sec.".
         /// </summary>
         public static string RetryAttemptMessage {
             get {
@@ -160,7 +160,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Request timed out.
+        ///   Looks up a localized string similar to "Request timed out.".
         /// </summary>
         public static string TimeoutMessage {
             get {
@@ -169,7 +169,7 @@ namespace IATec.Shared.HttpClient.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Unauthorized..
+        ///   Looks up a localized string similar to "Unauthorized.".
         /// </summary>
         public static string Unauthorized {
             get {
