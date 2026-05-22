@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-## [2.2.0] - 2026-05-21
+## [3.0.0] - 2026-05-21
 
 ### ADDED
 - Added XML documentation summaries in English to all public classes and methods for improved IntelliSense support.
@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### CHANGED
 - Renamed internal method `HandleResponse` to `HandleResponseAsync` in `ServiceClient` to follow the `Async` suffix convention.
 - Renamed internal method `Deserialize` to `DeserializeAsync` in `ServiceClient` to follow the `Async` suffix convention.
+- Changed `DeserializeAsync` return type from `Task<T>` to `Task<T?>` and added `where T : class` constraint to safely handle null deserialization results.
+- **BREAKING**: Made `ResponseDto<T>.Data` property nullable (`T?`). Consumers must check `Success == true` before accessing `Data`; otherwise `Data` will be `null`.
 
 ## [2.1.0] - 2026-01-09
 

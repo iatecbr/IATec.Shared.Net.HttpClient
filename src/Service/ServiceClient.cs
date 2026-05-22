@@ -63,7 +63,18 @@ namespace IATec.Shared.HttpClient.Service
                 await HandleResponseAsync(response, responseDto);
 
                 if (responseDto.Success)
-                    responseDto.SetData(await DeserializeAsync<T>(response));
+                {
+                    var data = await DeserializeAsync<T>(response);
+                    if (data is null)
+                    {
+                        responseDto.AddError(_localizer.GetString(nameof(Messages.DeserializationError)));
+                        responseDto.SetSuccess(false);
+                    }
+                    else
+                    {
+                        responseDto.SetData(data);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -157,7 +168,18 @@ namespace IATec.Shared.HttpClient.Service
                 await HandleResponseAsync(response, responseDto);
 
                 if (responseDto.Success)
-                    responseDto.SetData(await DeserializeAsync<T>(response));
+                {
+                    var data = await DeserializeAsync<T>(response);
+                    if (data is null)
+                    {
+                        responseDto.AddError(_localizer.GetString(nameof(Messages.DeserializationError)));
+                        responseDto.SetSuccess(false);
+                    }
+                    else
+                    {
+                        responseDto.SetData(data);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -239,7 +261,18 @@ namespace IATec.Shared.HttpClient.Service
                 await HandleResponseAsync(response, responseDto);
 
                 if (responseDto.Success)
-                    responseDto.SetData(await DeserializeAsync<T>(response));
+                {
+                    var data = await DeserializeAsync<T>(response);
+                    if (data is null)
+                    {
+                        responseDto.AddError(_localizer.GetString(nameof(Messages.DeserializationError)));
+                        responseDto.SetSuccess(false);
+                    }
+                    else
+                    {
+                        responseDto.SetData(data);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -320,7 +353,18 @@ namespace IATec.Shared.HttpClient.Service
                 await HandleResponseAsync(response, responseDto);
 
                 if (responseDto.Success)
-                    responseDto.SetData(await DeserializeAsync<T>(response));
+                {
+                    var data = await DeserializeAsync<T>(response);
+                    if (data is null)
+                    {
+                        responseDto.AddError(_localizer.GetString(nameof(Messages.DeserializationError)));
+                        responseDto.SetSuccess(false);
+                    }
+                    else
+                    {
+                        responseDto.SetData(data);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -388,12 +432,14 @@ namespace IATec.Shared.HttpClient.Service
                 return;
             }
 
-            var errorResponseDto = await DeserializeAsync<ErrorResponseDto>(response);
-
-            if (errorResponseDto.Messages.Count == 0)
-                responseDto.AddError((int)HttpStatusCode.BadRequest, _localizer.GetString(nameof(Messages.BadRequest)));
-            else
-                responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
+                if (responseDto.Success)
+                {
+                    var errorData = await DeserializeAsync<ErrorResponseDto>(response);
+                    if (errorData is null || errorData.Messages.Count == 0)
+                        responseDto.AddError((int)HttpStatusCode.BadRequest, _localizer.GetString(nameof(Messages.BadRequest)));
+                    else
+                        responseDto.AddRangeError((int)response.StatusCode, errorData.Messages);
+                }
         }
 
         private string? GetStatusCodeMessages(HttpStatusCode responseStatusCode, BaseResponseDto responseDto)
@@ -410,10 +456,17 @@ namespace IATec.Shared.HttpClient.Service
             return statusCodeMessages.GetValueOrDefault(responseStatusCode);
         }
 
-        private static async Task<T> DeserializeAsync<T>(HttpResponseMessage response)
+        /// <summary>
+        /// Deserializes the HTTP response content to an optional typed object.
+        /// Returns null if the response body is empty or the JSON literal is null.
+        /// </summary>
+        /// <typeparam name="T">The target type for deserialization.</typeparam>
+        /// <param name="response">The HTTP response message containing the JSON content.</param>
+        /// <returns>A task that represents the asynchronous operation. The deserialized object or null.</returns>
+        private static async Task<T?> DeserializeAsync<T>(HttpResponseMessage response) where T : class
         {
             var responseData = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<T>(responseData, SerializerExtensions.SerializerOptions)!;
+            return JsonSerializer.Deserialize<T>(responseData, SerializerExtensions.SerializerOptions);
         }
     }
 }
