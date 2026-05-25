@@ -8,8 +8,18 @@ using System.Net.Http;
 
 namespace IATec.Shared.HttpClient.Extensions
 {
+    /// <summary>
+    /// Provides extension methods for configuring retry policies.
+    /// </summary>
     public static class RetryExtensions
     {
+        /// <summary>
+        /// Creates a retry policy that handles transient HTTP failures.
+        /// </summary>
+        /// <param name="retryCount">The maximum number of retry attempts.</param>
+        /// <param name="retryDelay">The delay between retry attempts.</param>
+        /// <param name="localizer">The string localizer for messages.</param>
+        /// <returns>An asynchronous retry policy for <see cref="HttpResponseMessage"/>.</returns>
         public static AsyncRetryPolicy<HttpResponseMessage> RetryPolicy(
             int retryCount, TimeSpan retryDelay, IStringLocalizer<Messages> localizer)
         {

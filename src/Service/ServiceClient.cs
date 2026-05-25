@@ -12,17 +12,31 @@ using System.Threading.Tasks;
 
 namespace IATec.Shared.HttpClient.Service
 {
+    /// <summary>
+    /// Provides HTTP request methods with built-in resiliency policies and error handling.
+    /// </summary>
     internal class ServiceClient : IServiceClient
     {
         private readonly System.Net.Http.HttpClient _httpClient;
         private readonly IStringLocalizer<Messages> _localizer;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServiceClient"/> class.
+        /// </summary>
+        /// <param name="httpClient">The underlying HTTP client.</param>
+        /// <param name="localizer">The string localizer for messages.</param>
         public ServiceClient(System.Net.Http.HttpClient httpClient, IStringLocalizer<Messages> localizer)
         {
             _httpClient = httpClient;
             _localizer = localizer;
         }
 
+        /// <summary>
+        /// Sends an HTTP GET request to the specified URL and deserializes the response.
+        /// </summary>
+        /// <typeparam name="T">The type of the expected response.</typeparam>
+        /// <param name="url">The request URL.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the response data.</returns>
         public async Task<ResponseDto<T>> GetAsync<T>(string url) where T : class
         {
             var responseDto = new ResponseDto<T>();
@@ -46,10 +60,21 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponseAsync(response, responseDto);
 
                 if (responseDto.Success)
-                    responseDto.SetData(await Deserialize<T>(response));
+                {
+                    var data = await DeserializeAsync<T>(response);
+                    if (data is null)
+                    {
+                        responseDto.AddError(_localizer.GetString(nameof(Messages.DeserializationError)));
+                        responseDto.SetSuccess(false);
+                    }
+                    else
+                    {
+                        responseDto.SetData(data);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -60,6 +85,11 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
+        /// <summary>
+        /// Sends an HTTP GET request to the specified URL and returns the raw string response.
+        /// </summary>
+        /// <param name="url">The request URL.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the raw string response.</returns>
         public async Task<ResponseDto<string>> GetStringAsync(string url)
         {
             var responseDto = new ResponseDto<string>();
@@ -106,6 +136,13 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
+        /// <summary>
+        /// Sends an HTTP POST request to the specified URL with the given content and deserializes the response.
+        /// </summary>
+        /// <typeparam name="T">The type of the expected response.</typeparam>
+        /// <param name="url">The request URL.</param>
+        /// <param name="content">The HTTP content to send.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the response data.</returns>
         public async Task<ResponseDto<T>> PostAsync<T>(string url, HttpContent content) where T : class
         {
             var responseDto = new ResponseDto<T>();
@@ -128,10 +165,21 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponseAsync(response, responseDto);
 
                 if (responseDto.Success)
-                    responseDto.SetData(await Deserialize<T>(response));
+                {
+                    var data = await DeserializeAsync<T>(response);
+                    if (data is null)
+                    {
+                        responseDto.AddError(_localizer.GetString(nameof(Messages.DeserializationError)));
+                        responseDto.SetSuccess(false);
+                    }
+                    else
+                    {
+                        responseDto.SetData(data);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -142,6 +190,12 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
+        /// <summary>
+        /// Sends an HTTP POST request to the specified URL with the given content.
+        /// </summary>
+        /// <param name="url">The request URL.</param>
+        /// <param name="content">The HTTP content to send.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task<BaseResponseDto> PostAsync(string url, HttpContent content)
         {
             var responseDto = new BaseResponseDto();
@@ -164,7 +218,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponseAsync(response, responseDto);
             }
             catch (Exception ex)
             {
@@ -175,6 +229,13 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
+        /// <summary>
+        /// Sends an HTTP PUT request to the specified URL with the given content and deserializes the response.
+        /// </summary>
+        /// <typeparam name="T">The type of the expected response.</typeparam>
+        /// <param name="url">The request URL.</param>
+        /// <param name="content">The HTTP content to send.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the response data.</returns>
         public async Task<ResponseDto<T>> PutAsync<T>(string url, HttpContent content) where T : class
         {
             var responseDto = new ResponseDto<T>();
@@ -197,10 +258,21 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponseAsync(response, responseDto);
 
                 if (responseDto.Success)
-                    responseDto.SetData(await Deserialize<T>(response));
+                {
+                    var data = await DeserializeAsync<T>(response);
+                    if (data is null)
+                    {
+                        responseDto.AddError(_localizer.GetString(nameof(Messages.DeserializationError)));
+                        responseDto.SetSuccess(false);
+                    }
+                    else
+                    {
+                        responseDto.SetData(data);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -211,6 +283,12 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
+        /// <summary>
+        /// Sends an HTTP PUT request to the specified URL with the given content.
+        /// </summary>
+        /// <param name="url">The request URL.</param>
+        /// <param name="content">The HTTP content to send.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task<BaseResponseDto> PutAsync(string url, HttpContent content)
         {
             var responseDto = new BaseResponseDto();
@@ -233,7 +311,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponseAsync(response, responseDto);
             }
             catch (Exception ex)
             {
@@ -244,6 +322,12 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
+        /// <summary>
+        /// Sends an HTTP DELETE request to the specified URL and deserializes the response.
+        /// </summary>
+        /// <typeparam name="T">The type of the expected response.</typeparam>
+        /// <param name="url">The request URL.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the response data.</returns>
         public async Task<ResponseDto<T>> DeleteAsync<T>(string url) where T : class
         {
             var responseDto = new ResponseDto<T>();
@@ -266,10 +350,21 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponseAsync(response, responseDto);
 
                 if (responseDto.Success)
-                    responseDto.SetData(await Deserialize<T>(response));
+                {
+                    var data = await DeserializeAsync<T>(response);
+                    if (data is null)
+                    {
+                        responseDto.AddError(_localizer.GetString(nameof(Messages.DeserializationError)));
+                        responseDto.SetSuccess(false);
+                    }
+                    else
+                    {
+                        responseDto.SetData(data);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -280,6 +375,11 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
+        /// <summary>
+        /// Sends an HTTP DELETE request to the specified URL.
+        /// </summary>
+        /// <param name="url">The request URL.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task<BaseResponseDto> DeleteAsync(string url)
         {
             var responseDto = new BaseResponseDto();
@@ -302,7 +402,7 @@ namespace IATec.Shared.HttpClient.Service
 
             try
             {
-                await HandleResponse(response, responseDto);
+                await HandleResponseAsync(response, responseDto);
             }
             catch (Exception ex)
             {
@@ -313,7 +413,7 @@ namespace IATec.Shared.HttpClient.Service
             return responseDto;
         }
 
-        private async Task HandleResponse(
+        private async Task HandleResponseAsync(
             HttpResponseMessage response,
             BaseResponseDto responseDto
         )
@@ -332,12 +432,14 @@ namespace IATec.Shared.HttpClient.Service
                 return;
             }
 
-            var errorResponseDto = await Deserialize<ErrorResponseDto>(response);
-
-            if (errorResponseDto.Messages.Count == 0)
-                responseDto.AddError((int)HttpStatusCode.BadRequest, _localizer.GetString(nameof(Messages.BadRequest)));
-            else
-                responseDto.AddRangeError((int)response.StatusCode, errorResponseDto.Messages);
+                if (responseDto.Success)
+                {
+                    var errorData = await DeserializeAsync<ErrorResponseDto>(response);
+                    if (errorData is null || errorData.Messages.Count == 0)
+                        responseDto.AddError((int)HttpStatusCode.BadRequest, _localizer.GetString(nameof(Messages.BadRequest)));
+                    else
+                        responseDto.AddRangeError((int)response.StatusCode, errorData.Messages);
+                }
         }
 
         private string? GetStatusCodeMessages(HttpStatusCode responseStatusCode, BaseResponseDto responseDto)
@@ -354,10 +456,17 @@ namespace IATec.Shared.HttpClient.Service
             return statusCodeMessages.GetValueOrDefault(responseStatusCode);
         }
 
-        private static async Task<T> Deserialize<T>(HttpResponseMessage response)
+        /// <summary>
+        /// Deserializes the HTTP response content to an optional typed object.
+        /// Returns null if the response body is empty or the JSON literal is null.
+        /// </summary>
+        /// <typeparam name="T">The target type for deserialization.</typeparam>
+        /// <param name="response">The HTTP response message containing the JSON content.</param>
+        /// <returns>A task that represents the asynchronous operation. The deserialized object or null.</returns>
+        private static async Task<T?> DeserializeAsync<T>(HttpResponseMessage response) where T : class
         {
             var responseData = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<T>(responseData, SerializerExtensions.SerializerOptions)!;
+            return JsonSerializer.Deserialize<T>(responseData, SerializerExtensions.SerializerOptions);
         }
     }
 }
